@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# promos
-=======
 # Promos súper
 
 Buscador de promos de Carrefour, Día y Coto.
@@ -49,4 +46,16 @@ Buscador de promos de Carrefour, Día y Coto.
 - Dentro de cada tienda, las páginas de resultados, los lotes de stock y las consultas de promos van en paralelo (máx. 6 a la vez).
 - Las promos se consultan primero para los productos relevantes (los que muestra el filtro "Solo lo que busqué").
 - Dos búsquedas idénticas simultáneas comparten una sola consulta. La segunda vez que buscás lo mismo sale de la caché (6 h).
->>>>>>> b2fc25e (Initial Commit)
+
+## Mismo producto en varias tiendas
+- Si un producto está en 2 o más tiendas se muestra en una sola tarjeta, con un renglón por tienda (el más barato primero) y cuánto se ahorra.
+- Se identifican por código de barras (EAN). Sin EAN, solo se juntan si el nombre normalizado (sin importar orden ni acentos) y el tamaño son idénticos. Dos EAN distintos nunca se juntan.
+- El precio de cada tienda ya incluye su mejor promo vigente (por unidad, llevando las unidades que pida la promo).
+
+## Mi compra (lista de compras con total por tienda)
+- Tocá el **+** de cualquier tarjeta para agregarlo a Mi compra (si ya estaba, suma una unidad).
+- En la pestaña **Mi compra** ajustás las cantidades. La app calcula cuánto sale todo en cada tienda y la mejor combinación entre tiendas, contando las promos que piden llevar 2 o 3 unidades (2º al 70%, 3x2…) con su tope y vigencia. Las promos con tarjeta/billetera cuentan solo si el casillero está marcado.
+- Una tienda extra solo se recomienda si ahorra más del 3% del total.
+- Debajo de cada tienda sugiere el mejor beneficio por día/banco de los próximos 7 días (de `beneficios.json`).
+- Los precios se mantienen al día solos: cada búsqueda que los vuelve a ver los refresca, y `node track.js` incluye las búsquedas de donde salieron tus productos. El botón **Actualizar precios** fuerza la consulta y marca "sin stock" lo que ya no aparece.
+- `npm test` corre los tests del servidor, la lógica y la página.

@@ -3,11 +3,16 @@
 const fs = require("fs");
 const path = require("path");
 const { rastrear } = require("./lib/track");
+const { compraTerminos } = require("./db");
 
 const archivo = process.env.WATCHLIST_FILE || path.join(__dirname, "watchlist.json");
+// Sin argumentos: la lista de seguimiento + las búsquedas de donde salieron los productos de "Mi compra"
 const terminos = process.argv.length > 2
   ? process.argv.slice(2)
-  : JSON.parse(fs.readFileSync(archivo, "utf8")).terminos;
+  : [...new Set([
+      ...JSON.parse(fs.readFileSync(archivo, "utf8")).terminos.map((x) => String(x).trim().toLowerCase()),
+      ...compraTerminos(),
+    ])];
 
 console.log(`[${new Date().toLocaleString("es-AR")}] Rastreando ${terminos.length} términos…`);
 rastrear({ terminos }).then((res) => {

@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node test/run.js",
+    "test": "node --no-warnings test/run.js && node test/ui.js",
     "track": "node track.js"
   },
   "engines": {

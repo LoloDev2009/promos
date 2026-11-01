@@ -100,6 +100,8 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(j.tiendas.dia.ok, true);
   assert.equal(j.tiendas.coto.ok, true);
   assert.ok(j.items.every((i) => i.rel && typeof i.rel.pos === "number"), "cada item trae su relevancia");
+  assert.ok(j.items.every((i) => typeof i.clave === "string" && i.clave.length > 0), "cada item trae su clave de producto");
+  assert.equal(j.items.find((i) => i.nombre.includes("Yogur Griego")).clave, "ean:7791337010017");
   assert.equal(j.items.filter((i) => i.tienda !== "coto").length, 4, "sin stock debe filtrarse");
   assert.ok(!j.items.some((i) => /fantasma|agotada/.test(i.nombre)), "stock de catálogo falso: el carrito dice sin stock");
   const union = j.items.find((i) => i.nombre.includes("Unión"));
@@ -174,6 +176,49 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(yogurArroz.senales.diasEnPromo, 2);
   const unionLista = itemsYerba.find((i) => i.nombre.includes("Unión"));
   assert.equal(unionLista.senales.enPromoDesde, null, "la promo de Unión pide tarjeta: no cuenta en las señales");
+
+  // ---- Agrupar el mismo producto entre tiendas ----
+  const { claveProducto } = require("../lib/agrupar");
+  const { agruparFilas } = require("../public/logica");
+  const it = (o) => ({ tienda: "carrefour", itemId: "1", nombre: "X", ean: null, cantidad: null, unidad: null, ...o });
+  // EAN: mismo código aunque venga con ceros adelante o como número
+  assert.equal(claveProducto(it({ ean: "7622202370045" })), claveProducto(it({ tienda: "dia", ean: "07622202370045" })));
+  assert.equal(claveProducto(it({ ean: 7791337010017 })), "ean:7791337010017");
+  // EAN distinto: nunca se juntan, aunque el nombre sea igual (dos sabores / dos envases)
+  assert.notEqual(claveProducto(it({ ean: "7790001111111", nombre: "Yogur Frutilla 125g", cantidad: 0.125, unidad: "kg" })),
+                  claveProducto(it({ tienda: "dia", ean: "7790002222222", nombre: "Yogur Frutilla 125g", cantidad: 0.125, unidad: "kg" })));
+  // EAN inválido (muy corto) se ignora y se usa el nombre
+  assert.ok(claveProducto(it({ ean: "7791", nombre: "Yerba Mate Natura 500 g.", cantidad: 0.5, unidad: "kg" })).startsWith("nom:"));
+  // Sin EAN: mismo nombre y tamaño (distinto orden, mayúsculas, acentos) => misma clave
+  const a = claveProducto(it({ nombre: "Yerba mate Natura 500 g.", cantidad: 0.5, unidad: "kg" }));
+  const b = claveProducto(it({ tienda: "coto", nombre: "NATURA Yerba Mate 500 Gr", cantidad: 0.5, unidad: "kg" }));
+  assert.equal(a, b);
+  // ...pero un nombre con una palabra de más o un tamaño distinto no se junta
+  assert.notEqual(a, claveProducto(it({ tienda: "dia", nombre: "Yerba Mate Natura Suave 500 Gr", cantidad: 0.5, unidad: "kg" })));
+  assert.notEqual(a, claveProducto(it({ tienda: "dia", nombre: "Yerba Mate Natura 1 Kg", cantidad: 1, unidad: "kg" })));
+  // Sin EAN y sin tamaño: no se junta con nada
+  assert.notEqual(claveProducto(it({ nombre: "Pan lactal", tienda: "dia", itemId: "5" })), claveProducto(it({ nombre: "Pan lactal", tienda: "coto", itemId: "6" })));
+
+  // agruparFilas: precios, tienda más barata y ahorro
+  const fila = (tienda, clave, final, extra = {}, c = {}) =>
+    ({ i: { tienda, itemId: tienda + clave, clave, nombre: `P ${tienda}`, descuentoPct: 0, ...extra }, c: { final, porUnidad: final * 2, promo: null, ...c } });
+  const gs = agruparFilas([
+    fila("carrefour", "ean:1", 1000), fila("dia", "ean:1", 800), fila("coto", "ean:1", 900, {}, { promo: { pctEfectivo: 35 } }),
+    fila("coto", "ean:2", 500),
+    fila("dia", "ean:3", 700), fila("dia", "ean:3", 650), // mismo producto dos veces en la misma tienda: queda la más barata
+  ]);
+  assert.equal(gs.length, 3);
+  const g1 = gs.find((g) => g.filas.length === 3);
+  assert.deepEqual(g1.filas.map((f) => f.i.tienda), ["dia", "coto", "carrefour"], "ordenadas de más barata a más cara");
+  assert.equal(g1.mejor.i.tienda, "dia");
+  assert.equal(g1.ahorro, 200);
+  assert.equal(g1.ahorroPct, 20);
+  assert.equal(g1.descuento, 35, "el descuento del grupo es el mayor entre sus tiendas");
+  const g3 = gs.find((g) => g.filas[0].i.clave === "ean:3");
+  assert.equal(g3.filas.length, 1, "una sola fila por tienda");
+  assert.equal(g3.final, 650);
+  assert.equal(g3.ahorro, 0);
+  assert.equal(agruparFilas([fila("dia", undefined, 1), fila("coto", undefined, 1)]).length, 2, "sin clave no se juntan");
 
   // ---- Rendimiento ----
   const { pool } = require("../lib/concurrencia");
@@ -277,6 +322,98 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   const diaManana = apiCal.dias[1];
   assert.deepEqual(diaManana.vencen.map((v) => [v.tienda, v.cantidad]), [["carrefour", 1]],
     "una promo de Carrefour sin tarjeta vence mañana; la que pide tarjeta no cuenta");
+
+  // ---- Mi compra: plan por tienda ----
+  const { planCompra, costoEn } = require("../public/logica");
+  const HOY = "2026-10-30";
+  const m = (tienda, precio, extra = {}) => ({ tienda, precio, nombre: `${tienda} prod`, link: "http://x", promos: [], ...extra });
+  const promo2 = { tipo: "70% 2da", minUnidades: 2, pctEfectivo: 35, requierePago: false, hasta: null };
+  assert.equal(costoEn(m("x", 1000, { promos: [promo2] }), 1, HOY, true).total, 1000, "1 unidad: la promo de 2 no aplica");
+  assert.equal(costoEn(m("x", 1000, { promos: [promo2] }), 2, HOY, true).total, 1300);
+  assert.equal(costoEn(m("x", 1000, { promos: [promo2] }), 3, HOY, true).total, 2300, "la 3ª unidad va a precio completo");
+  assert.equal(Math.round(costoEn(m("x", 1000, { promos: [{ minUnidades: 3, pctEfectivo: 100 / 3 }] }), 6, HOY, true).total), 4000, "3x2 dos veces");
+  assert.equal(costoEn(m("x", 1000, { promos: [{ ...promo2, tope: 2 }] }), 4, HOY, true).total, 3300, "el tope limita las unidades con promo");
+  assert.equal(costoEn(m("x", 1000, { promos: [{ ...promo2, requierePago: true }] }), 2, HOY, false).total, 2000, "sin tarjeta no cuenta");
+  assert.equal(costoEn(m("x", 1000, { promos: [{ ...promo2, hasta: "2026-10-29" }] }), 2, HOY, true).total, 2000, "promo vencida");
+
+  const entradas = [
+    { id: 1, nombre: "A", cantidad: 2, miembros: [m("carrefour", 1000, { promos: [promo2] }), m("coto", 900)] },
+    { id: 2, nombre: "B", cantidad: 1, miembros: [m("dia", 500), m("coto", 600)] },
+  ];
+  const T = ["carrefour", "dia", "coto"];
+  const plan1 = planCompra(entradas, { fecha: HOY, conTarjeta: true, tiendas: T });
+  assert.equal(plan1.unaTienda[0].tiendas[0], "coto");
+  assert.equal(plan1.unaTienda[0].total, 2400);
+  assert.equal(plan1.recomendado.total, 1800);
+  assert.deepEqual(plan1.recomendado.tiendas, ["carrefour", "dia"], "reparte donde cada producto es más barato");
+  assert.equal(plan1.ahorroVsUna, 600);
+  assert.equal(plan1.recomendado.subtotales.carrefour, 1300);
+  assert.equal(plan1.recomendado.faltan.length, 0);
+  // una tienda de más solo si el ahorro supera el umbral (3%)
+  const poco = planCompra([
+    { id: 1, nombre: "A", cantidad: 1, miembros: [m("coto", 1000), m("carrefour", 990)] },
+    { id: 2, nombre: "B", cantidad: 1, miembros: [m("coto", 500)] },
+  ], { fecha: HOY, conTarjeta: true, tiendas: T });
+  assert.deepEqual(poco.recomendado.tiendas, ["coto"], "0,7% de ahorro no justifica ir a otra tienda");
+  // sin stock y faltantes
+  const sin = planCompra([{ id: 1, nombre: "A", cantidad: 1, miembros: [m("coto", 100, { sinStock: true })] },
+                          { id: 2, nombre: "B", cantidad: 1, miembros: [m("dia", 50)] }], { fecha: HOY, tiendas: T });
+  assert.equal(sin.recomendado.cubiertos, 1);
+  assert.deepEqual(sin.recomendado.faltan, ["A"]);
+  // solo tiendas activas
+  const solo = planCompra(entradas, { fecha: HOY, conTarjeta: true, tiendas: ["coto"] });
+  assert.equal(solo.recomendado.total, 2400);
+
+  // ---- Mi compra: API, enganche de precios y actualización ----
+  const dbm = require("../db");
+  const jb = await (await fetch(`${base}/api/buscar?q=yerba`)).json();
+  const itUnion = jb.items.find((i) => i.nombre.includes("Unión"));
+  const itMan = jb.items.find((i) => i.nombre.includes("Mañanita"));
+  const itYogur = jb.items.find((i) => i.nombre.includes("Yogur Griego"));
+  const post = (body) => fetch(`${base}/api/compras`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const resp = await post({ clave: "ean:test1", nombre: "Yerba test", q: "Yerba", items: [itUnion, itMan] });
+  assert.equal(resp.status, 200);
+  let lc = (await resp.json()).lista;
+  assert.equal(lc.length, 1);
+  assert.equal(lc[0].cantidad, 1);
+  assert.equal(lc[0].miembros.length, 2);
+  assert.deepEqual(lc[0].terminos, ["yerba"], "guarda de qué búsqueda salió, en minúsculas");
+  assert.ok(!("rel" in lc[0].miembros[0]), "no guarda campos de más");
+  lc = (await (await post({ clave: "ean:test1", nombre: "Yerba test", q: "yerba", items: [itUnion] })).json()).lista;
+  assert.equal(lc.length, 1);
+  assert.equal(lc[0].cantidad, 2, "agregar de nuevo suma una unidad");
+  const idA = lc[0].id;
+  lc = (await (await fetch(`${base}/api/compras/${idA}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cantidad: 5 }) })).json()).lista;
+  assert.equal(lc[0].cantidad, 5);
+  lc = (await (await fetch(`${base}/api/compras/${idA}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cantidad: 0 }) })).json()).lista;
+  assert.equal(lc[0].cantidad, 1, "la cantidad mínima es 1");
+  assert.equal((await post({ nombre: "x", items: [itUnion] })).status, 400, "falta clave");
+  assert.equal((await post({ clave: "k", nombre: "x", items: [] })).status, 400, "sin items");
+  assert.equal((await post({ clave: "k", nombre: "x", items: [{ tienda: "inventada", itemId: 1, precio: 1 }] })).status, 400, "tienda desconocida");
+  assert.equal((await fetch(`${base}/api/compras/9999`, { method: "DELETE" })).status, 404);
+
+  // Enganche: cualquier búsqueda que guarde precios refresca los productos de la lista
+  dbm.guardar("dia", "yerba", [{ ...itMan, precio: 1500 }]);
+  lc = (await (await fetch(`${base}/api/compras`)).json()).lista;
+  assert.equal(lc[0].miembros.find((x) => x.tienda === "dia").precio, 1500, "el precio se actualizó solo");
+
+  // Actualizar: vuelve a consultar; lo que ya no aparece queda "sin stock"
+  await post({ clave: "ean:fantasma", nombre: "Producto fantasma", q: "yerba",
+    items: [{ tienda: "carrefour", itemId: "GHOST", nombre: "Fantasma", precio: 100, promos: [] }] });
+  const act = await (await fetch(`${base}/api/compras/actualizar`, { method: "POST" })).json();
+  assert.deepEqual(act.fallas, []);
+  const fantasma = act.lista.find((x) => x.clave === "ean:fantasma").miembros[0];
+  assert.equal(fantasma.sinStock, true, "no volvió a aparecer: marcado sin stock");
+  const real = act.lista.find((x) => x.clave === "ean:test1");
+  assert.equal(real.miembros.find((x) => x.tienda === "dia").precio, 1990, "precio refrescado desde la tienda");
+  assert.ok(real.miembros.every((x) => !x.sinStock));
+  assert.ok(dbm.compraTerminos().includes("yerba"), "el seguimiento diario incluye las búsquedas de Mi compra");
+  const plApi = planCompra(act.lista, { fecha: HOY, conTarjeta: true, tiendas: T });
+  assert.equal(plApi.recomendado.faltan.length, 1, "el producto sin stock figura como faltante");
+  const sumSub = Object.values(plApi.recomendado.subtotales).reduce((a, b) => a + b, 0);
+  assert.equal(Math.round(sumSub), Math.round(plApi.recomendado.total));
+  const quitado = await (await fetch(`${base}/api/compras/${act.lista.find((x) => x.clave === "ean:fantasma").id}`, { method: "DELETE" })).json();
+  assert.equal(quitado.lista.length, 1);
 
   // una tienda caída no rompe a la otra
   carre.close();

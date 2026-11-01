@@ -51,6 +51,38 @@
   .seccion h2 { font-size:17px; margin:0; text-transform:capitalize; }
   .seccion small { color:var(--muted); }
   .oculto { display:none; }
+  .wrap { position:relative; display:flex; }
+  .wrap > .card { flex:1; min-width:0; }
+  @media (min-width:640px) { .wrap.grupo { grid-column: span 2; } }
+  .btn-add { position:absolute; top:8px; right:8px; width:30px; height:30px; padding:0; border-radius:50%; font-size:20px; line-height:1; }
+  #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--text); color:var(--bg);
+    padding:8px 16px; border-radius:99px; font-size:14px; opacity:0; pointer-events:none; transition:opacity .2s; }
+  #toast.on { opacity:1; }
+  .barra { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:10px; }
+  .item { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px;
+    display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; }
+  .item .nom { flex:1 1 220px; min-width:0; }
+  .item .nom b { overflow-wrap:anywhere; }
+  .item small { display:block; color:var(--muted); }
+  .cant { display:flex; align-items:center; gap:8px; }
+  .cant button, .quitar { padding:4px 10px; font-size:16px; background:var(--card); color:var(--text); border:1px solid var(--line); }
+  .cant span { min-width:22px; text-align:center; font-weight:700; }
+  .plan h3 { margin:14px 0 6px; font-size:16px; }
+  .tcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:10px; }
+  .tcard h4 { margin:0 0 6px; display:flex; justify-content:space-between; font-size:15px; text-transform:capitalize; }
+  .linea { display:flex; justify-content:space-between; gap:10px; padding:3px 0; font-size:14px; border-top:1px solid var(--line); }
+  .linea:first-of-type { border-top:0; }
+  .linea a:hover { text-decoration:underline; }
+  .sug { margin-top:6px; font-size:13px; color:var(--good); }
+  .alt { font-size:14px; padding:3px 0; }
+  .alt small { color:var(--muted); }
+  .viejo { color:var(--warn); }
+  .filas { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
+  .fila { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; }
+  .fila.mejor { border-color:var(--good); background:color-mix(in srgb, var(--good) 8%, transparent); }
+  .fila .precio-s { font-weight:700; font-size:17px; }
+  .fila:hover { border-color:var(--accent); }
+  .ahorro { margin-top:6px; font-size:13px; color:var(--good); font-weight:600; }
   .reco { background:color-mix(in srgb, var(--good) 12%, var(--card)); border:1px solid var(--good); border-radius:12px; padding:12px; margin-bottom:12px; }
   .dia { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
   .dia h3 { margin:0 0 6px; font-size:15px; text-transform:capitalize; }
@@ -67,6 +99,7 @@
   <div class="tabs">
     <button class="tab on" id="tabBuscar" type="button">Buscar</button>
     <button class="tab" id="tabLista" type="button">Mi lista</button>
+    <button class="tab" id="tabCompra" type="button">Mi compra <span id="cuenta"></span></button>
     <button class="tab" id="tabCal" type="button">Cuándo comprar</button>
   </div>
 
@@ -100,12 +133,23 @@
     <div id="cal"></div>
   </section>
 
+  <section id="vistaCompra" class="oculto">
+    <div class="barra">
+      <button id="btnActualizar" type="button">Actualizar precios</button>
+      <span id="estadoCompra" class="estado"></span>
+    </div>
+    <div id="compraLista"></div>
+    <div id="compraPlan" class="plan"></div>
+  </section>
+
   <section id="vistaLista" class="oculto">
     <div id="estadoLista" class="estado"></div>
     <div id="lista"></div>
   </section>
 </main>
+<div id="toast"></div>
 
+<script src="logica.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const TIENDAS = ["carrefour", "dia", "coto"];
@@ -137,7 +181,7 @@ function diasPara(iso) {
   return Math.round((Date.parse(iso) - Date.parse(hoy())) / 86400000);
 }
 
-function tarjeta(i, c) {
+function badgesDe(i, c) {
   const badges = [];
   if (i.descuentoPct > 0) badges.push(`<span class="badge">-${i.descuentoPct}%</span>`);
   if (c.promo) {
@@ -160,20 +204,62 @@ function tarjeta(i, c) {
     else if (s.vsPromedioPct !== null && s.vsPromedioPct <= -5) badges.push(`<span class="badge">${Math.abs(s.vsPromedioPct)}% bajo su promedio</span>`);
   }
   for (const e of i.etiquetas || []) badges.push(`<span class="badge tag">${esc(e)}</span>`);
+  return badges;
+}
 
-  const tachado = c.promo ? `<span class="tachado">${peso(i.precio)}</span>` :
-    (i.precioLista > i.precio ? `<span class="tachado">${peso(i.precioLista)}</span>` : "");
+function tachadoDe(i, c) {
+  if (c.promo) return `<span class="tachado">${peso(i.precio)}</span>`;
+  return i.precioLista > i.precio ? `<span class="tachado">${peso(i.precioLista)}</span>` : "";
+}
+
+function tarjeta(i, c) {
   const unidad = c.porUnidad ? `<div class="unidad">${peso(c.porUnidad)} / ${i.unidad}</div>` : "";
   return `<a class="card" href="${esc(i.link)}" target="_blank" rel="noopener">
     ${i.imagen ? `<img loading="lazy" src="${esc(i.imagen)}" alt="">` : ""}
     <div class="info">
       <span class="tienda">${esc(i.tienda)}</span>
       <p class="nombre">${esc(i.nombre)}</p>
-      <div><span class="precio">${peso(c.final)}</span>${tachado}</div>
+      <div><span class="precio">${peso(c.final)}</span>${tachadoDe(i, c)}</div>
       ${unidad}
-      <div>${badges.join("")}</div>
+      <div>${badgesDe(i, c).join("")}</div>
     </div>
   </a>`;
+}
+
+// Un mismo producto en 2 o más tiendas: una tarjeta con un renglón por tienda
+function cuerpoGrupo(g) {
+  if (g.filas.length === 1) return tarjeta(g.mejor.i, g.mejor.c);
+  const imagen = (g.filas.find((f) => f.i.imagen) || g.mejor).i.imagen;
+  const filas = g.filas.map((f, k) => {
+    const { i, c } = f;
+    const unidad = c.porUnidad ? `<span class="unidad">${peso(c.porUnidad)} / ${i.unidad}</span>` : "";
+    return `<a class="fila ${k === 0 ? "mejor" : ""}" href="${esc(i.link)}" target="_blank" rel="noopener">
+      <span class="tienda">${esc(i.tienda)}</span>
+      <span class="precio-s">${peso(c.final)}</span>${tachadoDe(i, c)} ${unidad}
+      ${k === 0 ? `<span class="badge">más barato</span>` : ""}
+      <span>${badgesDe(i, c).join("")}</span>
+    </a>`;
+  }).join("");
+  const lleva = g.mejor.c.promo && g.mejor.c.promo.minUnidades > 1 ? ` llevando ${g.mejor.c.promo.minUnidades}` : "";
+  const ahorro = g.ahorro > 0
+    ? `<div class="ahorro">Ahorrás ${peso(g.ahorro)} (${g.ahorroPct}%) por unidad comprando en ${esc(g.mejor.i.tienda)}${lleva}</div>` : "";
+  return `<div class="card grupo">
+    ${imagen ? `<img loading="lazy" src="${esc(imagen)}" alt="">` : ""}
+    <div class="info">
+      <p class="nombre">${esc(g.mejor.i.nombre)}</p>
+      <div class="filas">${filas}</div>
+      ${ahorro}
+    </div>
+  </div>`;
+}
+
+// Cada tarjeta lleva un botón "+" que la agrega a Mi compra (con el precio de todas las tiendas)
+const registro = new Map();
+let idReg = 0, qContexto = "", ultimoQ = "";
+function tarjetaGrupo(g) {
+  const id = ++idReg;
+  registro.set(id, { g, q: qContexto });
+  return `<div class="wrap ${g.filas.length > 1 ? "grupo" : ""}">${cuerpoGrupo(g)}<button class="btn-add" type="button" data-gid="${id}" title="Agregar a Mi compra">+</button></div>`;
 }
 
 /* ---------- Buscar ---------- */
@@ -187,19 +273,20 @@ function renderBuscar() {
   const ocultos = deTiendas.length - visibles.length;
   $("ocultos").innerHTML = ocultos > 0
     ? `Ocultos ${ocultos} productos que solo contienen la palabra (ej. "dulce de leche" al buscar leche). Desmarcá "Solo lo que busqué" para verlos.` : "";
-  const filas = visibles.map((i) => ({ i, c: calcular(i, conTarjeta) }));
+
+  qContexto = ultimoQ;
+  const grupos = Logica.agruparFilas(visibles.map((i) => ({ i, c: calcular(i, conTarjeta) })));
   const orden = $("orden").value;
-  filas.sort((a, b) => {
-    if (orden === "unidad") return (a.c.porUnidad ?? Infinity) - (b.c.porUnidad ?? Infinity);
-    if (orden === "desc") {
-      const da = Math.max(a.i.descuentoPct, a.c.promo?.pctEfectivo || 0);
-      const db = Math.max(b.i.descuentoPct, b.c.promo?.pctEfectivo || 0);
-      return db - da;
-    }
-    return a.c.final - b.c.final;
+  grupos.sort((a, b) => {
+    if (orden === "unidad") return a.porUnidad - b.porUnidad || a.final - b.final;
+    if (orden === "desc") return b.descuento - a.descuento;
+    return a.final - b.final;
   });
-  $("resultados").innerHTML = filas.length ? filas.map(({ i, c }) => tarjeta(i, c)).join("")
+  const comparables = grupos.filter((g) => g.filas.length > 1).length;
+  $("resultados").innerHTML = grupos.length
+    ? grupos.map(tarjetaGrupo).join("")
     : (pendientes > 0 ? "" : `<div class="vacio">Sin resultados.</div>`);
+  if (comparables) $("ocultos").innerHTML += `${$("ocultos").innerHTML ? "<br>" : ""}${comparables} productos están en más de una tienda y se muestran juntos.`;
 }
 
 let tokenBusqueda = 0;
@@ -209,6 +296,7 @@ async function buscar(e) {
   const q = $("q").value.trim();
   if (q.length < 2) return;
   const token = ++tokenBusqueda;
+  ultimoQ = q.toLowerCase();
   datos = [];
   pendientes = TIENDAS.length;
   $("resultados").innerHTML = "";
@@ -255,11 +343,12 @@ function renderLista() {
     : `Historial de hasta ${maxDias} días.`;
 
   $("lista").innerHTML = lista.terminos.map((t) => {
-    const filas = t.items.filter((i) => act.includes(i.tienda)).map((i) => ({ i, c: calcular(i, conTarjeta) }))
-      .sort((a, b) => (a.c.porUnidad ?? Infinity) - (b.c.porUnidad ?? Infinity)).slice(0, 5);
+    qContexto = t.termino;
+    const grupos = Logica.agruparFilas(t.items.filter((i) => act.includes(i.tienda)).map((i) => ({ i, c: calcular(i, conTarjeta) })))
+      .sort((a, b) => a.porUnidad - b.porUnidad || a.final - b.final).slice(0, 5);
     const act8 = t.actualizado ? new Date(t.actualizado).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : null;
     return `<div class="seccion"><h2>${esc(t.termino)}</h2><small>${act8 ? "actualizado " + act8 : "sin datos todavía — corré node track.js"}</small></div>
-      <div class="grid">${filas.length ? filas.map(({ i, c }) => tarjeta(i, c)).join("") : `<div class="vacio">Sin datos.</div>`}</div>`;
+      <div class="grid">${grupos.length ? grupos.map(tarjetaGrupo).join("") : `<div class="vacio">Sin datos.</div>`}</div>`;
   }).join("");
 }
 
@@ -316,10 +405,162 @@ async function cargarCal() {
   }
 }
 
+/* ---------- Mi compra ---------- */
+let compra = [];
+const CAMPOS = ["tienda", "itemId", "sellerId", "nombre", "marca", "ean", "link", "imagen", "precio", "precioLista", "descuentoPct", "promos", "etiquetas", "cantidad", "unidad", "clave"];
+const recortar = (it) => Object.fromEntries(CAMPOS.filter((k) => it[k] !== undefined).map((k) => [k, it[k]]));
+
+async function enviar(metodo, url, body) {
+  const r = await fetch(url, { method: metodo, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || "Error");
+  return j;
+}
+function aviso(msg) {
+  $("toast").textContent = msg;
+  $("toast").classList.add("on");
+  setTimeout(() => $("toast").classList.remove("on"), 1800);
+}
+const cuentaCompra = () => ($("cuenta").textContent = compra.length ? `(${compra.length})` : "");
+const haceCuanto = (iso) => {
+  const h = (Date.now() - Date.parse(iso)) / 3600000;
+  return h < 1 ? "menos de 1 h" : h < 48 ? `${Math.round(h)} h` : `${Math.round(h / 24)} días`;
+};
+
+async function cargarCompra() {
+  try { compra = (await (await fetch("/api/compras")).json()).lista || []; } catch { /* sin servidor */ }
+  cuentaCompra();
+  renderCompra();
+}
+
+function agregarACompra(gid) {
+  const reg = registro.get(gid);
+  if (!reg) return;
+  const base = reg.g.mejor.i;
+  enviar("POST", "/api/compras", {
+    clave: base.clave || `solo:${base.tienda}:${base.itemId}`,
+    nombre: base.nombre, q: reg.q, items: reg.g.filas.map((f) => recortar(f.i)),
+  }).then((j) => { compra = j.lista; cuentaCompra(); renderCompra(); aviso("Agregado a Mi compra"); })
+    .catch((e) => aviso(e.message));
+}
+
+function mejorBeneficio(tienda) {
+  if (!cal) return null;
+  let best = null;
+  for (const d of cal.dias) {
+    const b = d.mejor && d.mejor[tienda];
+    if (b && (!best || b.pct > best.b.pct)) best = { b, fecha: d.fecha };
+  }
+  return best;
+}
+
+function lineaCompra(l) {
+  const promo = l.promo
+    ? ` <span class="badge">${esc(l.promo.tipo || "promo")}${l.promo.minUnidades > 1 ? ` · ${l.unidadesConPromo} de ${l.cantidad} u.` : ""}</span>` +
+      (l.promo.requierePago ? ` <span class="badge tag">con tarjeta</span>` : "") : "";
+  return `<div class="linea"><span>${l.cantidad} × <a href="${esc(l.item.link)}" target="_blank" rel="noopener">${esc(l.item.nombre)}</a>${promo}</span><b>${peso(l.total)}</b></div>`;
+}
+
+function renderCompra() {
+  if (!compra.length) {
+    $("compraLista").innerHTML = `<div class="vacio">Tu compra está vacía. Tocá el + de cualquier producto para agregarlo.</div>`;
+    $("compraPlan").innerHTML = "";
+    $("estadoCompra").textContent = "";
+    return;
+  }
+  const act = activas();
+  const conTarjeta = $("tarjeta").checked;
+
+  $("compraLista").innerHTML = compra.map((e) => {
+    const porTienda = act.map((t) => {
+      const ms = e.miembros.filter((m) => m.tienda === t);
+      if (!ms.length) return null;
+      if (ms.every((m) => m.sinStock)) return `${esc(t)}: <span class="viejo">sin stock</span>`;
+      const m = ms.filter((x) => !x.sinStock).sort((a, b) => a.precio - b.precio)[0];
+      return `${esc(t)} ${peso(m.precio)}`;
+    }).filter(Boolean).join(" · ");
+    return `<div class="item"><div class="nom"><b>${esc(e.nombre)}</b><small>${porTienda || "No está en las tiendas elegidas"}</small></div>
+      <div class="cant"><button type="button" data-op="menos" data-id="${e.id}">−</button><span>${e.cantidad}</span><button type="button" data-op="mas" data-id="${e.id}">+</button></div>
+      <button class="quitar" type="button" data-op="quitar" data-id="${e.id}" title="Quitar">✕</button></div>`;
+  }).join("");
+
+  const plan = Logica.planCompra(compra, { fecha: hoy(), conTarjeta, tiendas: act });
+  const rec = plan.recomendado;
+  const viejo = Math.min(...compra.flatMap((e) => e.miembros.map((m) => Date.parse(m.actualizadoEn))));
+  const horas = (Date.now() - viejo) / 3600000;
+  $("estadoCompra").innerHTML = `Precios de hace ${haceCuanto(new Date(viejo).toISOString())}${horas > 24 ? ` <span class="viejo">— conviene actualizar</span>` : ""}`;
+
+  if (!rec || rec.cubiertos === 0) {
+    $("compraPlan").innerHTML = `<div class="vacio">Ninguna de las tiendas elegidas tiene estos productos.</div>`;
+    return;
+  }
+  const tiendasRec = Object.keys(rec.compras);
+  let html = `<div class="reco"><b>Mejor opción:</b> ${tiendasRec.length === 1 ? "todo en " + esc(tiendasRec[0]) : "repartir entre " + tiendasRec.map(esc).join(" y ")} — <b>${peso(rec.total)}</b>`;
+  if (plan.ahorroVsUna > 0 && plan.mejorUna) html += `<br><small>Ahorrás ${peso(plan.ahorroVsUna)} frente a comprar todo en ${esc(plan.mejorUna.tiendas[0])} (${peso(plan.mejorUna.total)}).</small>`;
+  if (rec.faltan.length) html += `<br><small class="viejo">Sin stock o sin datos en estas tiendas: ${rec.faltan.map(esc).join(", ")}.</small>`;
+  html += `</div>`;
+
+  html += tiendasRec.map((t) => {
+    const lineas = rec.compras[t].map(lineaCompra).join("");
+    const mb = mejorBeneficio(t);
+    const sug = mb ? (() => {
+      const ahorro = Math.min(rec.subtotales[t] * mb.b.pct / 100, mb.b.tope || Infinity);
+      return `<div class="sug">💳 ${esc(mb.b.medio)} (${mb.b.pct}%) el ${esc(fechaDia(mb.fecha))}: ~${peso(ahorro)} menos${mb.b.verificar ? " (verificar)" : ""}</div>`;
+    })() : "";
+    return `<div class="tcard"><h4><span>${esc(t)}</span><span>${peso(rec.subtotales[t])}</span></h4>${lineas}${sug}</div>`;
+  }).join("");
+
+  html += `<h3>Alternativas</h3>`;
+  html += plan.unaTienda.filter((c) => c.cubiertos > 0).map((c) => `<div class="alt">Todo en <b>${esc(c.tiendas[0])}</b>: ${peso(c.total)}${c.faltan.length ? ` <small class="viejo">(faltan ${c.faltan.length})</small>` : ""}</div>`).join("");
+  // repartir entre más tiendas solo se muestra si de verdad mejora (más barato o cubre más productos)
+  let previa = plan.alternativas[0];
+  const utiles = plan.alternativas.slice(1).filter((c) => {
+    const mejora = c.cubiertos > previa.cubiertos || c.total < previa.total - 0.5;
+    if (mejora) previa = c;
+    return mejora;
+  });
+  html += utiles.map((c) =>
+    `<div class="alt">Mejor con ${c.tiendas.length} tiendas (${c.tiendas.map(esc).join(" + ")}): ${peso(c.total)}${c.faltan.length ? ` <small class="viejo">(faltan ${c.faltan.length})</small>` : ""}</div>`).join("");
+  html += `<div class="nota">Una tienda extra solo se recomienda si ahorra más de 3% del total. Los precios incluyen la mejor promo de cada tienda para la cantidad elegida.</div>`;
+  $("compraPlan").innerHTML = html;
+}
+
+async function actualizarCompra() {
+  $("estadoCompra").textContent = "Actualizando precios… (puede tardar unos segundos)";
+  $("btnActualizar").disabled = true;
+  try {
+    const j = await enviar("POST", "/api/compras/actualizar");
+    compra = j.lista;
+    cuentaCompra();
+    renderCompra();
+    if (j.fallas.length) $("estadoCompra").innerHTML += ` <span class="err">· no se pudo consultar: ${j.fallas.map(esc).join("; ")}</span>`;
+  } catch (e) {
+    $("estadoCompra").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+  } finally {
+    $("btnActualizar").disabled = false;
+  }
+}
+
+document.addEventListener("click", (ev) => {
+  const add = ev.target.closest?.(".btn-add");
+  if (add) return agregarACompra(+add.dataset.gid);
+  const b = ev.target.closest?.("#compraLista [data-op]");
+  if (!b) return;
+  const id = +b.dataset.id, e = compra.find((x) => x.id === id);
+  if (!e) return;
+  const op = b.dataset.op;
+  const llamada = op === "quitar" ? enviar("DELETE", `/api/compras/${id}`)
+    : enviar("PATCH", `/api/compras/${id}`, { cantidad: e.cantidad + (op === "mas" ? 1 : -1) });
+  llamada.then((j) => { compra = j.lista; cuentaCompra(); renderCompra(); }).catch((err) => aviso(err.message));
+});
+$("btnActualizar").addEventListener("click", actualizarCompra);
+
 function ir(vista) {
   $("vistaBuscar").classList.toggle("oculto", vista !== "buscar");
   $("vistaLista").classList.toggle("oculto", vista !== "lista");
   $("vistaCal").classList.toggle("oculto", vista !== "cal");
+  $("vistaCompra").classList.toggle("oculto", vista !== "compra");
+  $("tabCompra").classList.toggle("on", vista === "compra");
   $("lblOrden").classList.toggle("oculto", vista !== "buscar");
   $("lblEstricto").classList.toggle("oculto", vista !== "buscar");
   $("tabBuscar").classList.toggle("on", vista === "buscar");
@@ -327,13 +568,16 @@ function ir(vista) {
   $("tabCal").classList.toggle("on", vista === "cal");
   if (vista === "lista") cargarLista();
   if (vista === "cal") cargarCal();
+  if (vista === "compra") { cargarCompra(); cargarCal().then(renderCompra); }
 }
 
 $("form").addEventListener("submit", buscar);
+cargarCompra();
 $("tabBuscar").addEventListener("click", () => ir("buscar"));
 $("tabLista").addEventListener("click", () => ir("lista"));
 $("tabCal").addEventListener("click", () => ir("cal"));
-[...TIENDAS, "estricto", "tarjeta", "orden"].forEach((id) => $(id).addEventListener("change", () => { renderBuscar(); renderLista(); renderCal(); }));
+$("tabCompra").addEventListener("click", () => ir("compra"));
+[...TIENDAS, "estricto", "tarjeta", "orden"].forEach((id) => $(id).addEventListener("change", () => { renderBuscar(); renderLista(); renderCal(); renderCompra(); }));
 </script>
 </body>
 </html>
