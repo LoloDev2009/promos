@@ -51,6 +51,8 @@
   .seccion h2 { font-size:17px; margin:0; text-transform:capitalize; }
   .seccion small { color:var(--muted); }
   .oculto { display:none; }
+  #tiendasBox { display:contents; }
+  #tiendasBox label { display:flex; gap:6px; align-items:center; cursor:pointer; }
   .wrap { position:relative; display:flex; }
   .wrap > .card { flex:1; min-width:0; }
   @media (min-width:640px) { .wrap.grupo { grid-column: span 2; } }
@@ -104,9 +106,7 @@
   </div>
 
   <div class="controls">
-    <label><input type="checkbox" id="carrefour" checked> Carrefour</label>
-    <label><input type="checkbox" id="dia" checked> Día</label>
-    <label><input type="checkbox" id="coto" checked> Coto</label>
+    <span id="tiendasBox"></span>
     <label id="lblEstricto"><input type="checkbox" id="estricto" checked> Solo lo que busqué</label>
     <label><input type="checkbox" id="tarjeta" checked> Cuento promos con tarjeta / billetera</label>
     <label id="lblOrden">Ordenar por
@@ -117,6 +117,8 @@
       </select>
     </label>
   </div>
+
+  <div id="avisoPromos" class="nota"></div>
 
   <section id="vistaBuscar">
     <form class="search" id="form">
@@ -152,7 +154,8 @@
 <script src="logica.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
-const TIENDAS = ["carrefour", "dia", "coto"];
+let TIENDAS = [];
+let INFO = {};
 let datos = [];
 let lista = null;
 
@@ -181,8 +184,10 @@ function diasPara(iso) {
   return Math.round((Date.parse(iso) - Date.parse(hoy())) / 86400000);
 }
 
+const promosSinLeer = (tienda) => INFO[tienda]?.promos === "pendiente";
 function badgesDe(i, c) {
   const badges = [];
+  if (promosSinLeer(i.tienda)) badges.push(`<span class="badge warn" title="Todavía no leemos las promociones de esta tienda: el precio puede ser menor en la web">promos sin leer</span>`);
   if (i.descuentoPct > 0) badges.push(`<span class="badge">-${i.descuentoPct}%</span>`);
   if (c.promo) {
     let txt = esc(c.promo.tipo || "Promo");
@@ -458,7 +463,7 @@ function lineaCompra(l) {
   const promo = l.promo
     ? ` <span class="badge">${esc(l.promo.tipo || "promo")}${l.promo.minUnidades > 1 ? ` · ${l.unidadesConPromo} de ${l.cantidad} u.` : ""}</span>` +
       (l.promo.requierePago ? ` <span class="badge tag">con tarjeta</span>` : "") : "";
-  return `<div class="linea"><span>${l.cantidad} × <a href="${esc(l.item.link)}" target="_blank" rel="noopener">${esc(l.item.nombre)}</a>${promo}</span><b>${peso(l.total)}</b></div>`;
+  return `<div class="linea"><span>${l.cantidad} × <a href="${esc(l.item.link)}" target="_blank" rel="noopener">${esc(l.item.nombre)}</a>${promo}${promosSinLeer(l.item.tienda) ? ` <span class="badge warn">promos sin leer</span>` : ""}</span><b>${peso(l.total)}</b></div>`;
 }
 
 function renderCompra() {
@@ -572,12 +577,27 @@ function ir(vista) {
 }
 
 $("form").addEventListener("submit", buscar);
-cargarCompra();
 $("tabBuscar").addEventListener("click", () => ir("buscar"));
 $("tabLista").addEventListener("click", () => ir("lista"));
 $("tabCal").addEventListener("click", () => ir("cal"));
 $("tabCompra").addEventListener("click", () => ir("compra"));
-[...TIENDAS, "estricto", "tarjeta", "orden"].forEach((id) => $(id).addEventListener("change", () => { renderBuscar(); renderLista(); renderCal(); renderCompra(); }));
+async function iniciar() {
+  try {
+    const j = await (await fetch("/api/tiendas")).json();
+    TIENDAS = j.tiendas.map((t) => t.id);
+    INFO = Object.fromEntries(j.tiendas.map((t) => [t.id, t]));
+  } catch {
+    TIENDAS = ["carrefour", "dia", "coto"];
+    INFO = {};
+  }
+  $("tiendasBox").innerHTML = TIENDAS.map((t) => `<label><input type="checkbox" id="${esc(t)}" checked> ${esc(INFO[t]?.nombre || t)}</label>`).join("");
+  const sinLeer = TIENDAS.filter(promosSinLeer).map((t) => INFO[t].nombre || t);
+  $("avisoPromos").innerHTML = sinLeer.length
+    ? `De ${sinLeer.join(", ")} todavía no leemos las promociones: sus precios pueden ser menores en la web de lo que ves acá.` : "";
+  [...TIENDAS, "estricto", "tarjeta", "orden"].forEach((id) => $(id).addEventListener("change", () => { renderBuscar(); renderLista(); renderCal(); renderCompra(); }));
+  await cargarCompra();
+}
+const listo = iniciar();
 </script>
 </body>
 </html>

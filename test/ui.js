@@ -20,6 +20,11 @@ const fetchStub = async (url, opts = {}) => {
     return { ok: true, json: async () => ({ id: 1, lista: [{ id: 1, clave: b.clave, nombre: b.nombre, cantidad: 2, terminos: [b.q],
       miembros: b.items.map((i) => ({ ...i, actualizadoEn: iso })) }] }) };
   }
+  if (url === "/api/tiendas") {
+    return { ok: true, json: async () => ({ tiendas: [
+      { id: "carrefour", nombre: "Carrefour", promos: "carrito" }, { id: "coto", nombre: "Coto", promos: "catalogo" },
+      { id: "dia", nombre: "Día", promos: "precio" }, { id: "jumbo", nombre: "Jumbo", promos: "pendiente" } ] }) };
+  }
   return { ok: true, json: async () => ({ lista: [] }) };
 };
 
@@ -27,11 +32,13 @@ const item = (o) => ({ itemId: "1", descuentoPct: 0, precioLista: o.precio, etiq
   link: "http://x/" + o.tienda, imagen: null, rel: { coincide: true, pos: 0 }, ...o });
 
 const extra = `
+await listo;
 datos = [
   item({ tienda: "carrefour", itemId: "10", clave: "ean:7791337010017", nombre: "Yogur Griego 300g", precio: 5400, marca: "Y", ean: "7791337010017" }),
   item({ tienda: "coto", itemId: "20", clave: "ean:7791337010017", nombre: "Yogur Griego natural Yogurísimo 300g", precio: 5170,
          promos: [{ tipo: "70% 2da", minUnidades: 2, pctEfectivo: 35, requierePago: false, hasta: null }] }),
   item({ tienda: "dia", itemId: "30", clave: "ean:999", nombre: "Yogur solo en Día 125g", precio: 1000, cantidad: 0.125 }),
+  item({ tienda: "jumbo", itemId: "40", clave: "ean:7791337010017", nombre: "Yogur Griego Jumbo 300g", precio: 5000 }),
 ];
 ultimoQ = "yogur"; pendientes = 0;
 renderBuscar();
@@ -40,12 +47,17 @@ const gid = +buscarHtml.match(/class="wrap grupo">[\\s\\S]*?data-gid="(\\d+)"/)[
 document.__click({ target: { closest: (s) => (s === ".btn-add" ? { dataset: { gid: String(gid) } } : null) } });
 await new Promise((r) => setTimeout(r, 20));
 renderCompra();
-return { buscarHtml, planHtml: document.getElementById("compraPlan").innerHTML, listaHtml: document.getElementById("compraLista").innerHTML,
+return { tiendasHtml: document.getElementById("tiendasBox").innerHTML, aviso: document.getElementById("avisoPromos").innerHTML, buscarHtml, planHtml: document.getElementById("compraPlan").innerHTML, listaHtml: document.getElementById("compraLista").innerHTML,
          cuenta: document.getElementById("cuenta").textContent };
 `;
 
 (async () => {
   const out = await new Function("Logica", "document", "fetch", "item", "return (async () => {" + script + extra + "})()")(Logica, document, fetchStub, item);
+
+  // Tiendas dinámicas desde el servidor + aviso de promos sin leer
+  assert.ok(out.tiendasHtml.includes('id="jumbo"') && out.tiendasHtml.includes('id="carrefour"'), "los casilleros salen de /api/tiendas");
+  assert.ok(out.aviso.includes("Jumbo"), "avisa que no leemos las promos de Jumbo");
+  assert.ok(out.buscarHtml.includes("promos sin leer"), "las filas de Jumbo llevan la advertencia");
 
   // Tarjetas
   assert.ok(/class="wrap grupo"/.test(out.buscarHtml), "el producto en 2 tiendas va en tarjeta agrupada");
@@ -58,7 +70,7 @@ return { buscarHtml, planHtml: document.getElementById("compraPlan").innerHTML, 
   const body = JSON.parse(post.opts.body);
   assert.equal(body.clave, "ean:7791337010017");
   assert.equal(body.q, "yogur");
-  assert.deepEqual(body.items.map((i) => i.tienda).sort(), ["carrefour", "coto"]);
+  assert.deepEqual(body.items.map((i) => i.tienda).sort(), ["carrefour", "coto", "jumbo"], "el grupo lleva las 3 tiendas que lo tienen");
   assert.ok(body.items.every((i) => !("rel" in i)), "solo los campos necesarios");
 
   // Mi compra: lista y plan (cantidad 2: la promo 2º al 70% de Coto aplica)

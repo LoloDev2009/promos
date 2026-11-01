@@ -4,12 +4,20 @@ const { parseCantidad } = require("../lib/unidades");
 const { analizar } = require("../lib/relevancia");
 const { pool } = require("../lib/concurrencia");
 
+// sc:          canal de ventas para el carrito. null = no mandarlo (en Jumbo/Disco/Vea con sc=1 da 400).
+// scBusqueda:  si la búsqueda vuelve sin precios, se reintenta con este sc (pasa a veces en Carrefour/Día).
+// promos:      "carrito"   = las promos se leen simulando un carrito
+//              "precio"    = el descuento ya viene en el precio (precio vs precio de lista)
+//              "pendiente" = todavía no se leen (Cencosud las arma fuera del motor estándar de VTEX)
 const TIENDAS = {
-  // simular=true: las promos viven en el carrito (hay que simularlo para verlas)
-  carrefour: { base: process.env.CARREFOUR_URL || "https://www.carrefour.com.ar", simular: true },
-  // Día: el descuento ya viene en el precio (precio vs precio de lista)
-  dia: { base: process.env.DIA_URL || "https://diaonline.supermercadosdia.com.ar", simular: false },
+  carrefour: { nombre: "Carrefour", base: process.env.CARREFOUR_URL || "https://www.carrefour.com.ar", sc: "1", scBusqueda: "1", promos: "carrito" },
+  dia: { nombre: "Día", base: process.env.DIA_URL || "https://diaonline.supermercadosdia.com.ar", sc: "1", scBusqueda: "1", promos: "precio" },
+  jumbo: { nombre: "Jumbo", base: process.env.JUMBO_URL || "https://www.jumbo.com.ar", sc: null, scBusqueda: null, promos: "pendiente" },
+  disco: { nombre: "Disco", base: process.env.DISCO_URL || "https://www.disco.com.ar", sc: null, scBusqueda: null, promos: "pendiente" },
+  vea: { nombre: "Vea", base: process.env.VEA_URL || "https://www.vea.com.ar", sc: null, scBusqueda: null, promos: "pendiente" },
 };
+
+const conSc = (url, sc) => (sc ? `${url}${url.includes("?") ? "&" : "?"}sc=${sc}` : url);
 
 const PAGE = 50;
 const HEADERS = {
@@ -30,7 +38,9 @@ function normalizar(tienda, p) {
   const seller = sku?.sellers?.[0];
   const offer = seller?.commertialOffer ?? {};
   const precio = offer.Price ?? 0;
-  const lista = offer.ListPrice ?? precio;
+  // ListPrice de Jumbo/Disco/Vea viene roto (~82 veces el precio real): si es absurdo o menor al precio, se ignora
+  let lista = offer.ListPrice > 0 ? offer.ListPrice : precio;
+  if (lista > precio * 3 || lista < precio) lista = precio;
   const { cantidad, unidad } = parseCantidad(p.productName);
   return {
     tienda,
@@ -54,14 +64,14 @@ function normalizar(tienda, p) {
 
 // Disponibilidad real: simula un carrito con 1 unidad de cada producto (en lotes) y deja solo los
 // que VTEX marca como "available". El stock del catálogo (AvailableQuantity) no es confiable.
-async function verificarStock(base, items) {
+async function verificarStock(base, items, cfg) {
   const lotes = [];
   for (let i = 0; i < items.length; i += 40) lotes.push(items.slice(i, i + 40));
   const disponibles = new Set();
   let verificado = true;
   await Promise.all(lotes.map(async (lote) => {
     try {
-      const data = await getJson(`${base}/api/checkout/pub/orderForms/simulation?sc=1`, {
+      const data = await getJson(conSc(`${base}/api/checkout/pub/orderForms/simulation`, cfg.sc), {
         method: "POST",
         headers: { ...HEADERS, "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -77,12 +87,15 @@ async function verificarStock(base, items) {
       lote.forEach((it) => disponibles.add(String(it.itemId)));
     }
   }));
+  // Si el carrito no da ningún producto como disponible, lo más probable es que la verificación esté mal
+  // configurada para esa tienda/zona (no que esté todo agotado): se usa el stock del catálogo.
+  if (disponibles.size === 0 && items.length >= 5) return { items, verificado: false };
   return { items: items.filter((it) => disponibles.has(String(it.itemId))), verificado };
 }
 
 // Simula un carrito de 4 unidades para detectar promos ACTIVAS (2x1, 3x2, 2do al X%...)
-async function simular(base, item) {
-  const data = await getJson(`${base}/api/checkout/pub/orderForms/simulation?sc=1`, {
+async function simular(base, item, cfg) {
+  const data = await getJson(conSc(`${base}/api/checkout/pub/orderForms/simulation`, cfg.sc), {
     method: "POST",
     headers: { ...HEADERS, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -101,25 +114,31 @@ async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, conc
   const BASE = base || cfg.base;
   const q = termino.replace(/['"]/g, " ").trim(); // VTEX rechaza comillas
 
-  // Todas las páginas de resultados a la vez. Si falla la primera es un error; las otras son opcionales.
-  const pedidas = await Promise.allSettled(
-    Array.from({ length: paginas }, (_, p) =>
-      getJson(
-        `${BASE}/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=${p * PAGE}&_to=${p * PAGE + PAGE - 1}`,
-        { headers: HEADERS }
+  // Todas las páginas a la vez. Si falla la primera es un error; las otras son opcionales.
+  async function traerPaginas(sc) {
+    const pedidas = await Promise.allSettled(
+      Array.from({ length: paginas }, (_, p) =>
+        getJson(
+          conSc(`${BASE}/api/catalog_system/pub/products/search?ft=${encodeURIComponent(q)}&_from=${p * PAGE}&_to=${p * PAGE + PAGE - 1}`, sc),
+          { headers: HEADERS }
+        )
       )
-    )
-  );
-  if (pedidas[0].status === "rejected") throw pedidas[0].reason;
-  const crudos = pedidas.flatMap((r) => (r.status === "fulfilled" && Array.isArray(r.value) ? r.value : []));
+    );
+    if (pedidas[0].status === "rejected") throw pedidas[0].reason;
+    return pedidas.flatMap((r) => (r.status === "fulfilled" && Array.isArray(r.value) ? r.value : []));
+  }
+  let crudos = await traerPaginas(null);
+  // VTEX a veces omite los precios si no se manda el canal de ventas: se reintenta con él (solo donde es válido)
+  const sinPrecios = (arr) => arr.length > 0 && arr.every((p) => !p.items?.[0]?.sellers?.length);
+  if (sinPrecios(crudos) && cfg.scBusqueda) crudos = await traerPaginas(cfg.scBusqueda);
 
   let items = crudos.map((p) => normalizar(tienda, p)).filter((i) => i.disponible && i.precio > 0);
   items = [...new Map(items.map((i) => [i.itemId, i])).values()]; // sin duplicados entre páginas
-  const v = await verificarStock(BASE, items);
+  const v = await verificarStock(BASE, items, cfg);
   items = v.items;
   items.forEach((i) => (i.stockVerificado = v.verificado));
 
-  if (cfg.simular) {
+  if (cfg.promos === "carrito") {
     // Las promos se consultan primero para los productos que realmente son lo buscado:
     // son los que muestra la página por defecto (los demás quedan ocultos por el filtro).
     const prioridad = (it) => {
@@ -132,7 +151,7 @@ async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, conc
       .map((x) => x.it);
     await pool(items.slice(0, maxSimulaciones), concurrencia, async (it) => {
       try {
-        it.promos = await simular(BASE, it);
+        it.promos = await simular(BASE, it, cfg);
       } catch {
         /* sin promo detectable para este producto */
       }

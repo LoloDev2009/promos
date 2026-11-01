@@ -59,3 +59,10 @@ Buscador de promos de Carrefour, Día y Coto.
 - Debajo de cada tienda sugiere el mejor beneficio por día/banco de los próximos 7 días (de `beneficios.json`).
 - Los precios se mantienen al día solos: cada búsqueda que los vuelve a ver los refresca, y `node track.js` incluye las búsquedas de donde salieron tus productos. El botón **Actualizar precios** fuerza la consulta y marca "sin stock" lo que ya no aparece.
 - `npm test` corre los tests del servidor, la lógica y la página.
+
+## Más tiendas: Jumbo, Disco y Vea (grupo Cencosud)
+- Ya se consultan precios y stock. Son VTEX como Carrefour y Día, con tres diferencias que el código respeta:
+  no se manda `sc=1` (da error 400), el precio de lista viene roto (se ignora si es absurdo) y **sus promociones no están en el lugar estándar**: todavía no se leen.
+  Mientras tanto la página avisa "promos sin leer" en esas tiendas, porque el precio real en la web puede ser menor.
+- `cencosud-probe.js` sirve para descubrir el endpoint de promos (ver instrucciones en el archivo).
+- `TIENDAS_ACTIVAS=carrefour,dia,coto npm start` limita las tiendas que se consultan (más rápido). Las tiendas de la página se cargan solas desde el servidor.

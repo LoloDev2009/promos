@@ -16,6 +16,9 @@ const TTL_MS = (+process.env.CACHE_HORAS || 6) * 3600 * 1000;
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json({ limit: "512kb" }));
 
+app.get("/api/tiendas", (req, res) =>
+  res.json({ tiendas: Object.entries(TIENDAS).map(([id, c]) => ({ id, nombre: c.nombre || id, promos: c.promos || "completas" })) }));
+
 // Evita repetir la misma búsqueda si llegan dos pedidos iguales a la vez (doble clic, dos pestañas)
 const enVuelo = new Map();
 function rastrearTienda(tienda, q) {

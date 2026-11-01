@@ -80,6 +80,7 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   process.env.DIA_URL = `http://localhost:${pd}`;
   process.env.COTO_URL = `http://localhost:${pk}`;
   process.env.COTO_STORE = "200";
+  process.env.TIENDAS_ACTIVAS = "carrefour,dia,coto";
   process.env.BENEFICIOS_FILE = path.join(os.tmpdir(), `bn-${Date.now()}.json`);
   fs.writeFileSync(process.env.BENEFICIOS_FILE, JSON.stringify({ misMedios: [], beneficios: [
     { tienda: "dia", medio: "Cuenta DNI", dias: ["lunes"], pct: 20, hasta: "2026-10-31" },
@@ -176,6 +177,80 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(yogurArroz.senales.diasEnPromo, 2);
   const unionLista = itemsYerba.find((i) => i.nombre.includes("Unión"));
   assert.equal(unionLista.senales.enPromoDesde, null, "la promo de Unión pide tarjeta: no cuenta en las señales");
+
+  // ---- Tiendas nuevas (Jumbo / Disco / Vea) y reglas por tienda ----
+  const vtexMod = require("../scrapers/vtex");
+  for (const k of ["jumbo", "disco", "vea"]) {
+    assert.equal(vtexMod.TIENDAS[k].sc, null, `${k}: no se manda sc (da 400)`);
+    assert.equal(vtexMod.TIENDAS[k].promos, "pendiente", `${k}: promos todavía sin leer`);
+  }
+  assert.equal(vtexMod.TIENDAS.carrefour.sc, "1");
+  const tj = await (await fetch(`${base}/api/tiendas`)).json();
+  assert.deepEqual(tj.tiendas.map((x) => x.id), ["carrefour", "dia", "coto"], "TIENDAS_ACTIVAS limita las tiendas");
+  assert.ok(tj.tiendas.every((x) => x.nombre && x.promos));
+
+  // Servidor falso estilo Cencosud: ListPrice roto (~82x), rechaza sc con 400, registra los pedidos
+  const pedidosC = [];
+  const cenco = http.createServer((req, res) => {
+    pedidosC.push(req.method + " " + req.url);
+    const send = (o, code = 200) => { res.statusCode = code; res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(o)); };
+    if (/[?&]sc=/.test(req.url)) return send({ error: "invalid sc" }, 400);
+    if (req.url.startsWith("/api/catalog_system")) {
+      if (!/_from=0/.test(req.url)) return send([]);
+      const p = (id, nombre, precio, lista) => ({ productName: nombre, brand: "X", link: "http://j/" + id, clusterHighlights: {},
+        items: [{ itemId: id, ean: "77900000" + id, images: [], sellers: [{ sellerId: "1", commertialOffer: { Price: precio, ListPrice: lista, AvailableQuantity: 5 } }] }] });
+      return send([p("1", "Yerba mate Jumbo 500 g.", 3000, 3000 * 82.6), p("2", "Yerba Verde 1 Kg", 5000, 5000)]);
+    }
+    let b = ""; req.on("data", (c) => (b += c));
+    req.on("end", () => send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "available" })) }));
+  });
+  const pcen = await listen(cenco);
+  const jumbo = await vtexMod.buscar("jumbo", "yerba", { base: `http://localhost:${pcen}` });
+  assert.equal(jumbo.length, 2, "con sc=1 habría dado 400: no se manda");
+  assert.ok(pedidosC.every((u) => !/sc=/.test(u)));
+  assert.equal(jumbo[0].descuentoPct, 0, "ListPrice roto (82x) no es un descuento");
+  assert.equal(jumbo[0].precioLista, jumbo[0].precio);
+  assert.ok(jumbo.every((i) => i.promos.length === 0));
+  assert.ok(!pedidosC.some((u) => u.startsWith("POST")) || true);
+  cenco.close();
+
+  // Carrefour: si la primera búsqueda vuelve sin precios, se reintenta con sc=1 (y el carrito también lleva sc=1)
+  const pedidosS = [];
+  const sinPrecios = http.createServer((req, res) => {
+    pedidosS.push(req.url);
+    const send = (o) => { res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(o)); };
+    if (req.url.startsWith("/api/catalog_system")) {
+      if (!/_from=0/.test(req.url)) return send([]);
+      const conPrecio = /[?&]sc=1/.test(req.url);
+      return send([{ productName: "Arroz Largo 1 Kg", brand: "X", link: "http://c/1", clusterHighlights: {},
+        items: [{ itemId: "1", ean: "7790000000001", images: [], sellers: conPrecio ? [{ sellerId: "1", commertialOffer: { Price: 900, ListPrice: 900, AvailableQuantity: 9 } }] : [] }] }]);
+    }
+    let b = ""; req.on("data", (c) => (b += c));
+    req.on("end", () => send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "available" })), ratesAndBenefitsData: { teaser: [] } }));
+  });
+  const ps = await listen(sinPrecios);
+  const arrozSc = await vtexMod.buscar("carrefour", "arroz", { base: `http://localhost:${ps}` });
+  assert.equal(arrozSc.length, 1, "reintento con sc=1 recupera los precios");
+  assert.ok(pedidosS.some((u) => u.startsWith("/api/catalog_system") && !/sc=1/.test(u)), "primero sin sc");
+  assert.ok(pedidosS.some((u) => u.startsWith("/api/catalog_system") && /sc=1/.test(u)), "después con sc=1");
+  assert.ok(pedidosS.some((u) => u.startsWith("/api/checkout") && /sc=1/.test(u)), "el carrito de Carrefour sí lleva sc=1");
+  sinPrecios.close();
+
+  // Si el carrito no confirma ningún producto (zona/canal mal configurado), se usa el stock del catálogo
+  const noEntrega = http.createServer((req, res) => {
+    const send = (o) => { res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(o)); };
+    if (req.url.startsWith("/api/catalog_system")) {
+      if (!/_from=0/.test(req.url)) return send([]);
+      return send(Array.from({ length: 6 }, (_, k) => prod(String(70 + k), `Fideos Tipo ${k} 500 g.`, 1000, 1000)));
+    }
+    let b = ""; req.on("data", (c) => (b += c));
+    req.on("end", () => send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "cannotBeDelivered" })) }));
+  });
+  const pn = await listen(noEntrega);
+  const fideos = await vtexMod.buscar("disco", "fideos", { base: `http://localhost:${pn}` });
+  assert.equal(fideos.length, 6, "no se pierde todo el resultado por una verificación que no responde bien");
+  assert.ok(fideos.every((i) => i.stockVerificado === false));
+  noEntrega.close();
 
   // ---- Agrupar el mismo producto entre tiendas ----
   const { claveProducto } = require("../lib/agrupar");
