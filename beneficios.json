@@ -1,0 +1,54 @@
+{
+  "_leeme": "Beneficios por día / banco / billetera. Editá este archivo cada mes. dias: lista de días (lunes..domingo), \"todos\", o null si el día no está claro (aparece aparte). adicional=true: se suma a otro beneficio, no compite en el ranking. verificar=true: confirmalo en la web del banco/tienda antes de contar con él.",
+  "misMedios": [],
+  "beneficios": [
+    {
+      "tienda": "dia", "medio": "Cuenta DNI", "dias": ["lunes"], "pct": 20, "tope": null, "topePeriodo": null,
+      "detalle": "Pagando con NFC. Sin tope de reintegro.",
+      "desde": null, "hasta": "2026-10-31", "adicional": false, "verificar": true,
+      "fuente": "viapais.com.ar, Cuenta DNI octubre 2026"
+    },
+    {
+      "tienda": "carrefour", "medio": "Cuenta DNI", "dias": null, "pct": 10, "tope": null, "topePeriodo": null,
+      "detalle": "Con consumo mínimo de $15.000, sin tope. Día a confirmar.",
+      "desde": null, "hasta": "2026-10-31", "adicional": false, "verificar": true,
+      "fuente": "viapais.com.ar, Cuenta DNI octubre 2026"
+    },
+    {
+      "tienda": "coto", "medio": "Cuenta DNI", "dias": null, "pct": 30, "tope": null, "topePeriodo": null,
+      "detalle": "Pagando con NFC, sin tope. La nota agrupa 'viernes y sábados': confirmar el día exacto.",
+      "desde": null, "hasta": "2026-10-31", "adicional": false, "verificar": true,
+      "fuente": "viapais.com.ar, Cuenta DNI octubre 2026"
+    },
+    {
+      "tienda": "dia", "medio": "Cuenta DNI", "dias": "todos", "pct": 5, "tope": 5000, "topePeriodo": "por semana",
+      "detalle": "5% adicional de Banco Provincia.",
+      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
+      "fuente": "elonce.com, descuentos octubre"
+    },
+    {
+      "tienda": "carrefour", "medio": "Cuenta DNI", "dias": "todos", "pct": 5, "tope": 5000, "topePeriodo": "por semana",
+      "detalle": "5% adicional de Banco Provincia.",
+      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
+      "fuente": "elonce.com, descuentos octubre"
+    },
+    {
+      "tienda": "dia", "medio": "BNA+ MODO", "dias": "todos", "pct": 5, "tope": 20000, "topePeriodo": "por mes",
+      "detalle": "5% adicional de Banco Nación pagando con BNA+ MODO. Vigencia a confirmar.",
+      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
+      "fuente": "elonce.com, descuentos octubre"
+    },
+    {
+      "tienda": "carrefour", "medio": "BNA+ MODO", "dias": "todos", "pct": 5, "tope": 20000, "topePeriodo": "por mes",
+      "detalle": "5% adicional de Banco Nación pagando con BNA+ MODO. Vigencia a confirmar.",
+      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
+      "fuente": "elonce.com, descuentos octubre"
+    },
+    {
+      "tienda": "coto", "medio": "BNA+ MODO", "dias": "todos", "pct": 5, "tope": 20000, "topePeriodo": "por mes",
+      "detalle": "5% adicional de Banco Nación pagando con BNA+ MODO. Vigencia a confirmar.",
+      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
+      "fuente": "elonce.com, descuentos octubre"
+    }
+  ]
+}

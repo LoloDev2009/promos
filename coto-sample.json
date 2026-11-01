@@ -1,0 +1,3848 @@
+{
+  "response": {
+    "result_sources": {
+      "token_match": {
+        "count": 931
+      },
+      "embeddings_match": {
+        "count": 0
+      }
+    },
+    "facets": [
+      {
+        "display_name": "Marca",
+        "name": "product_brand",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "9 DE ORO",
+            "value": "9 DE ORO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 11,
+            "display_name": "ACTIMEL",
+            "value": "ACTIMEL",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 10,
+            "display_name": "ACTIVIA",
+            "value": "ACTIVIA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "ARMONIA",
+            "value": "ARMONIA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "ATMA",
+            "value": "ATMA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 23,
+            "display_name": "BEAUDROIT",
+            "value": "BEAUDROIT",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "BILLIKEN",
+            "value": "BILLIKEN",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "CEREAL MIX",
+            "value": "CEREAL MIX",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "COFLER",
+            "value": "COFLER",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "COMPLETAR",
+            "value": "COMPLETAR",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 7,
+            "display_name": "COTO",
+            "value": "COTO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 72,
+            "display_name": "DAHI",
+            "value": "DAHI",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 22,
+            "display_name": "DANONINO",
+            "value": "DANONINO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "FELICES LAS VACAS",
+            "value": "FELICES LAS VACAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "FLYNN PAFF",
+            "value": "FLYNN PAFF",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 14,
+            "display_name": "GANDARA",
+            "value": "GANDARA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "GARCIA",
+            "value": "GARCIA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "GEORGALOS",
+            "value": "GEORGALOS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 22,
+            "display_name": "GRAN COMPRA",
+            "value": "GRAN COMPRA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 77,
+            "display_name": "ILOLAY",
+            "value": "ILOLAY",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 10,
+            "display_name": "KARINAT",
+            "value": "KARINAT",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "KÜHNE",
+            "value": "KÜHNE",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "LA CREMERÍA",
+            "value": "LA CREMERÍA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 5,
+            "display_name": "LA DELFINA",
+            "value": "LA DELFINA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 82,
+            "display_name": "LA SERENISIMA",
+            "value": "LA SERENISIMA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "LAS TRES NIÑAS",
+            "value": "LAS TRES NIÑAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "LECHELITA",
+            "value": "LECHELITA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 74,
+            "display_name": "MILKAUT",
+            "value": "MILKAUT",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "MINI ARROCITAS",
+            "value": "MINI ARROCITAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "QUAKER",
+            "value": "QUAKER",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 69,
+            "display_name": "SANCOR",
+            "value": "SANCOR",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 8,
+            "display_name": "SANCOR VIDA",
+            "value": "SANCOR VIDA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "SANCOR YOGS",
+            "value": "SANCOR YOGS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 88,
+            "display_name": "SER",
+            "value": "SER",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 29,
+            "display_name": "SERENISIMA",
+            "value": "SERENISIMA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "SILK",
+            "value": "SILK",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "SMARTLIFE",
+            "value": "SMARTLIFE",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "TALOS",
+            "value": "TALOS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "TAPONAZO",
+            "value": "TAPONAZO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "TIPICO",
+            "value": "TIPICO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 72,
+            "display_name": "TREGAR",
+            "value": "TREGAR",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "TURÉ",
+            "value": "TURÉ",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "ULTRACOMB",
+            "value": "ULTRACOMB",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "VIDACOL",
+            "value": "VIDACOL",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 15,
+            "display_name": "YATASTO",
+            "value": "YATASTO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "YELMO",
+            "value": "YELMO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 6,
+            "display_name": "YOGS",
+            "value": "YOGS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 14,
+            "display_name": "YOGURADE",
+            "value": "YOGURADE",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 149,
+            "display_name": "YOGURISIMO",
+            "value": "YOGURISIMO",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Ofertas",
+        "name": "sale_type",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 162,
+            "display_name": "Todas las Ofertas",
+            "value": "Todas las Ofertas",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 56,
+            "display_name": "2da Unid 70% DTO!! ",
+            "value": "2da Unid 70% DTO!! ",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 55,
+            "display_name": "Hasta 30% DTO!!",
+            "value": "Hasta 30% DTO!!",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 33,
+            "display_name": "2da Unid 50% DTO!!",
+            "value": "2da Unid 50% DTO!!",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 5,
+            "display_name": "2X1",
+            "value": "2X1",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 5,
+            "display_name": "3X2",
+            "value": "3X2",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "Llevando 2 (Hasta 30% DTO!!)",
+            "value": "Llevando 2 (Hasta 30% DTO!!)",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "Miembros Comunidad",
+            "value": "Miembros Comunidad",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "Hasta 40% DTO!!",
+            "value": "Hasta 40% DTO!!",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Sin TACC",
+        "name": "SIN TACC",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 221,
+            "display_name": "SI",
+            "value": "SI",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 79,
+            "display_name": "NO",
+            "value": "NO",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Tipo de producto",
+        "name": "product_family",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 470,
+            "display_name": "Yogur Entero",
+            "value": "Yogur Entero",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 386,
+            "display_name": "Yogur Descremado",
+            "value": "Yogur Descremado",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 18,
+            "display_name": "Yogur sin Lactosa",
+            "value": "Yogur sin Lactosa",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 11,
+            "display_name": "Leches Fermentadas",
+            "value": "Leches Fermentadas",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 7,
+            "display_name": "Alimento Lácteo",
+            "value": "Alimento Lácteo",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 5,
+            "display_name": "Caramelos",
+            "value": "Caramelos",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "Especiales",
+            "value": "Especiales",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "Alimentos Vegetales",
+            "value": "Alimentos Vegetales",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "Rellenas",
+            "value": "Rellenas",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "Barras de Chocolate",
+            "value": "Barras de Chocolate",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Contenido",
+        "name": "CONTENIDO",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 10,
+            "display_name": "150G",
+            "value": "150G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 6,
+            "display_name": "180G",
+            "value": "180G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 5,
+            "display_name": "190G",
+            "value": "190G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "900G",
+            "value": "900G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "300G",
+            "value": "300G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "200G",
+            "value": "200G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "1100G",
+            "value": "1100G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "480G",
+            "value": "480G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "950G",
+            "value": "950G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "550G",
+            "value": "550G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "220G",
+            "value": "220G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "175G",
+            "value": "175G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "400G",
+            "value": "400G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "160G",
+            "value": "160G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "600G",
+            "value": "600G",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "500G",
+            "value": "500G",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Tiempo de garantía",
+        "name": "GARANTIA",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 4,
+            "display_name": "6 MESES",
+            "value": "6 MESES",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "12 MESES ",
+            "value": "12 MESES ",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "24 MESES",
+            "value": "24 MESES",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Variedad",
+        "name": "product_class",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 603,
+            "display_name": "YOGURTS POTE/CARTON",
+            "value": "YOGURTS POTE/CARTON",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 175,
+            "display_name": "YOGURTS SACHET",
+            "value": "YOGURTS SACHET",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 85,
+            "display_name": "YOGURTS BOTELLA",
+            "value": "YOGURTS BOTELLA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 21,
+            "display_name": "ALIMENTO CONCENTRADO LACTEO",
+            "value": "ALIMENTO CONCENTRADO LACTEO",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 10,
+            "display_name": "HELADOS ESPECIALES",
+            "value": "HELADOS ESPECIALES",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 8,
+            "display_name": "YOGHURTERA",
+            "value": "YOGHURTERA",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 7,
+            "display_name": "LECHES VARIAS",
+            "value": "LECHES VARIAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 6,
+            "display_name": "GOLOSINAS",
+            "value": "GOLOSINAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 5,
+            "display_name": "LECHES FERMENTADAS",
+            "value": "LECHES FERMENTADAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 3,
+            "display_name": "CEREALES",
+            "value": "CEREALES",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "GALLET.CEREALES",
+            "value": "GALLET.CEREALES",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "ALIMENTOS VEGETALES",
+            "value": "ALIMENTOS VEGETALES",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "PROD DE COPETIN",
+            "value": "PROD DE COPETIN",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "POSTRES",
+            "value": "POSTRES",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "FRUTAS SECAS",
+            "value": "FRUTAS SECAS",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "DKT",
+            "value": "DKT",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      },
+      {
+        "display_name": "Potencia",
+        "name": "POTENCIA",
+        "type": "multiple",
+        "options": [
+          {
+            "status": "",
+            "count": 2,
+            "display_name": "20 W",
+            "value": "20 W",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "30 W",
+            "value": "30 W",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "21.5 W",
+            "value": "21.5 W",
+            "data": {}
+          },
+          {
+            "status": "",
+            "count": 1,
+            "display_name": "15 W",
+            "value": "15 W",
+            "data": {}
+          }
+        ],
+        "hidden": false,
+        "data": {}
+      }
+    ],
+    "groups": [
+      {
+        "group_id": "categoria",
+        "display_name": "Categorias",
+        "count": 931,
+        "data": {
+          "url": "/categoria/categorias/"
+        },
+        "children": [
+          {
+            "group_id": "catv00001255",
+            "display_name": "Frescos",
+            "count": 900,
+            "data": {
+              "url": "/categoria/frescos/"
+            },
+            "children": [],
+            "parents": [
+              {
+                "display_name": "Categorias",
+                "group_id": "categoria"
+              }
+            ]
+          },
+          {
+            "group_id": "catv00001254",
+            "display_name": "Almacén",
+            "count": 13,
+            "data": {
+              "url": "/categoria/almacén/"
+            },
+            "children": [],
+            "parents": [
+              {
+                "display_name": "Categorias",
+                "group_id": "categoria"
+              }
+            ]
+          },
+          {
+            "group_id": "catv00001990",
+            "display_name": "Electro",
+            "count": 8,
+            "data": {
+              "url": "/categoria/electro/"
+            },
+            "children": [],
+            "parents": [
+              {
+                "display_name": "Categorias",
+                "group_id": "categoria"
+              }
+            ]
+          },
+          {
+            "group_id": "catv00001296",
+            "display_name": "Congelados",
+            "count": 10,
+            "data": {
+              "url": "/categoria/congelados/"
+            },
+            "children": [],
+            "parents": [
+              {
+                "display_name": "Categorias",
+                "group_id": "categoria"
+              }
+            ]
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "results": [
+      {
+        "matched_terms": [
+          "yogur"
+        ],
+        "labels": {},
+        "data": {
+          "id": "prod00612391",
+          "url": "_/R-00612391-00612391-200",
+          "price": [
+            {
+              "id": "pl220_00612391",
+              "store": "220",
+              "listPrice": 5170,
+              "priceList": "priceList220",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl189_00612391",
+              "store": "189",
+              "listPrice": 5170,
+              "priceList": "priceList189",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl091_00612391",
+              "store": "091",
+              "listPrice": 5170,
+              "priceList": "priceList091",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl131_00612391",
+              "store": "131",
+              "listPrice": 5170,
+              "priceList": "priceList131",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl092_00612391",
+              "store": "092",
+              "listPrice": 5170,
+              "priceList": "priceList092",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl065_00612391",
+              "store": "065",
+              "listPrice": 5170,
+              "priceList": "priceList065",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl178_00612391",
+              "store": "178",
+              "listPrice": 5170,
+              "priceList": "priceList178",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl215_00612391",
+              "store": "215",
+              "listPrice": 5170,
+              "priceList": "priceList215",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl160_00612391",
+              "store": "160",
+              "listPrice": 5170,
+              "priceList": "priceList160",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl204_00612391",
+              "store": "204",
+              "listPrice": 5170,
+              "priceList": "priceList204",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl184_00612391",
+              "store": "184",
+              "listPrice": 5170,
+              "priceList": "priceList184",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl181_00612391",
+              "store": "181",
+              "listPrice": 5170,
+              "priceList": "priceList181",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl219_00612391",
+              "store": "219",
+              "listPrice": 5170,
+              "priceList": "priceList219",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl090_00612391",
+              "store": "090",
+              "listPrice": 5170,
+              "priceList": "priceList090",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl061_00612391",
+              "store": "061",
+              "listPrice": 4330,
+              "priceList": "priceList061",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 14433.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl060_00612391",
+              "store": "060",
+              "listPrice": 3725,
+              "priceList": "priceList060",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 12416.66,
+              "priceWithoutTax": 3078.51
+            },
+            {
+              "id": "pl197_00612391",
+              "store": "197",
+              "listPrice": 5170,
+              "priceList": "priceList197",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl085_00612391",
+              "store": "085",
+              "listPrice": 5170,
+              "priceList": "priceList085",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl075_00612391",
+              "store": "075",
+              "listPrice": 5170,
+              "priceList": "priceList075",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl185_00612391",
+              "store": "185",
+              "listPrice": 5170,
+              "priceList": "priceList185",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl209_00612391",
+              "store": "209",
+              "listPrice": 5170,
+              "priceList": "priceList209",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl188_00612391",
+              "store": "188",
+              "listPrice": 5170,
+              "priceList": "priceList188",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl165_00612391",
+              "store": "165",
+              "listPrice": 5170,
+              "priceList": "priceList165",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl064_00612391",
+              "store": "064",
+              "listPrice": 5170,
+              "priceList": "priceList064",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl078_00612391",
+              "store": "078",
+              "listPrice": 5170,
+              "priceList": "priceList078",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl063_00612391",
+              "store": "063",
+              "listPrice": 5170,
+              "priceList": "priceList063",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl182_00612391",
+              "store": "182",
+              "listPrice": 5170,
+              "priceList": "priceList182",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl107_00612391",
+              "store": "107",
+              "listPrice": 5170,
+              "priceList": "priceList107",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl238_00612391",
+              "store": "238",
+              "listPrice": 5170,
+              "priceList": "priceList238",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl129_00612391",
+              "store": "129",
+              "listPrice": 5170,
+              "priceList": "priceList129",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl056_00612391",
+              "store": "056",
+              "listPrice": 5170,
+              "priceList": "priceList056",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl109_00612391",
+              "store": "109",
+              "listPrice": 5170,
+              "priceList": "priceList109",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            },
+            {
+              "id": "pl200_00612391",
+              "store": "200",
+              "listPrice": 5170,
+              "priceList": "priceList200",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 17233.33,
+              "priceWithoutTax": 4272.73
+            }
+          ],
+          "sku_id": "sku00612391",
+          "sku_plu": 612391,
+          "discounts": [
+            {
+              "id": "38882080",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "70% 2da",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$3360.50",
+              "regularPriceText": "Precio Contado: $5170"
+            }
+          ],
+          "image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612391.jpg",
+          "sale_type": [
+            "2da Unid 70% DTO!! ",
+            "Todas las Ofertas"
+          ],
+          "product_brand": "YOGURISIMO",
+          "product_format": "Kilo",
+          "product_is_noa": 0,
+          "sku_description": "Yogur Griego natural sin endulzar Yogurísimo 300g",
+          "product_main_ean": 7791337010017,
+          "sku_display_name": "Yogur Griego natural sin endulzar Yogurísimo 300g",
+          "product_weighable": 0,
+          "product_list_price": 5170,
+          "store_availability": [
+            "056",
+            "063",
+            "064",
+            "065",
+            "075",
+            "078",
+            "085",
+            "090",
+            "091",
+            "092",
+            "107",
+            "109",
+            "129",
+            "131",
+            "160",
+            "165",
+            "178",
+            "181",
+            "182",
+            "184",
+            "185",
+            "188",
+            "189",
+            "197",
+            "200",
+            "204",
+            "209",
+            "215",
+            "219",
+            "220",
+            "238"
+          ],
+          "product_quantity_step": 0,
+          "product_large_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612391.jpg",
+          "product_format_quantity": 1,
+          "product_unit_of_measure": "UNI",
+          "product_medium_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/medium/00612300/00612391.jpg",
+          "product_minimum_quantity": 0,
+          "discounts_payment_methods": [
+            {
+              "id": "83735939",
+              "comentarios": "",
+              "precioCuota": "$3360.5",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "catv00001295",
+              "display_name": "Lácteos",
+              "path": "/categoria/catv00001255",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003251",
+              "display_name": "Yogures",
+              "path": "/categoria/catv00001255/catv00001295",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001255",
+              "display_name": "Frescos",
+              "path": "/categoria",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003283",
+              "display_name": "Yogur Entero",
+              "path": "/categoria/catv00001255/catv00001295/catv00003251",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                },
+                {
+                  "id": "catv00003251",
+                  "display_name": "Yogures"
+                }
+              ]
+            }
+          ]
+        },
+        "value": "Yogur Griego natural sin endulzar Yogurísimo 300g",
+        "is_slotted": false
+      },
+      {
+        "matched_terms": [
+          "yogur"
+        ],
+        "labels": {},
+        "data": {
+          "id": "prod00612394",
+          "url": "_/R-00612394-00612394-200",
+          "price": [
+            {
+              "id": "pl181_00612394",
+              "store": "181",
+              "listPrice": 2360,
+              "priceList": "priceList181",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl215_00612394",
+              "store": "215",
+              "listPrice": 2360,
+              "priceList": "priceList215",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl078_00612394",
+              "store": "078",
+              "listPrice": 2360,
+              "priceList": "priceList078",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl056_00612394",
+              "store": "056",
+              "listPrice": 2360,
+              "priceList": "priceList056",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl238_00612394",
+              "store": "238",
+              "listPrice": 2360,
+              "priceList": "priceList238",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl109_00612394",
+              "store": "109",
+              "listPrice": 2360,
+              "priceList": "priceList109",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl129_00612394",
+              "store": "129",
+              "listPrice": 2360,
+              "priceList": "priceList129",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl085_00612394",
+              "store": "085",
+              "listPrice": 2360,
+              "priceList": "priceList085",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl065_00612394",
+              "store": "065",
+              "listPrice": 2360,
+              "priceList": "priceList065",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl185_00612394",
+              "store": "185",
+              "listPrice": 2360,
+              "priceList": "priceList185",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl075_00612394",
+              "store": "075",
+              "listPrice": 2360,
+              "priceList": "priceList075",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl182_00612394",
+              "store": "182",
+              "listPrice": 2360,
+              "priceList": "priceList182",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl060_00612394",
+              "store": "060",
+              "listPrice": 1580,
+              "priceList": "priceList060",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 11285.71,
+              "priceWithoutTax": 1305.79
+            },
+            {
+              "id": "pl200_00612394",
+              "store": "200",
+              "listPrice": 2360,
+              "priceList": "priceList200",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl220_00612394",
+              "store": "220",
+              "listPrice": 2360,
+              "priceList": "priceList220",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl184_00612394",
+              "store": "184",
+              "listPrice": 2360,
+              "priceList": "priceList184",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl197_00612394",
+              "store": "197",
+              "listPrice": 2360,
+              "priceList": "priceList197",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl189_00612394",
+              "store": "189",
+              "listPrice": 2360,
+              "priceList": "priceList189",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl209_00612394",
+              "store": "209",
+              "listPrice": 2360,
+              "priceList": "priceList209",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl090_00612394",
+              "store": "090",
+              "listPrice": 2360,
+              "priceList": "priceList090",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl165_00612394",
+              "store": "165",
+              "listPrice": 2360,
+              "priceList": "priceList165",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl188_00612394",
+              "store": "188",
+              "listPrice": 2360,
+              "priceList": "priceList188",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl204_00612394",
+              "store": "204",
+              "listPrice": 2360,
+              "priceList": "priceList204",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl092_00612394",
+              "store": "092",
+              "listPrice": 2360,
+              "priceList": "priceList092",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl061_00612394",
+              "store": "061",
+              "listPrice": 1925,
+              "priceList": "priceList061",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 13750,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl131_00612394",
+              "store": "131",
+              "listPrice": 2360,
+              "priceList": "priceList131",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl219_00612394",
+              "store": "219",
+              "listPrice": 2360,
+              "priceList": "priceList219",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl160_00612394",
+              "store": "160",
+              "listPrice": 2360,
+              "priceList": "priceList160",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl063_00612394",
+              "store": "063",
+              "listPrice": 2360,
+              "priceList": "priceList063",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl091_00612394",
+              "store": "091",
+              "listPrice": 2360,
+              "priceList": "priceList091",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl064_00612394",
+              "store": "064",
+              "listPrice": 2360,
+              "priceList": "priceList064",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl107_00612394",
+              "store": "107",
+              "listPrice": 2360,
+              "priceList": "priceList107",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl178_00612394",
+              "store": "178",
+              "listPrice": 2360,
+              "priceList": "priceList178",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            }
+          ],
+          "sku_id": "sku00612394",
+          "sku_plu": 612394,
+          "sale_type": [
+            "2da Unid 70% DTO!! ",
+            "Todas las Ofertas"
+          ],
+          "discounts": [
+            {
+              "id": "38879955",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "70% 2da",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$1534.00",
+              "regularPriceText": "Precio Contado: $2360"
+            }
+          ],
+          "image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612394.jpg",
+          "product_brand": "YOGURISIMO",
+          "product_format": "Kilo",
+          "product_is_noa": 0,
+          "sku_description": "Yogur Griego sabor vainilla Yogurísimo 140g",
+          "product_main_ean": 7791337009950,
+          "sku_display_name": "Yogur Griego sabor vainilla Yogurísimo 140g",
+          "product_weighable": 0,
+          "store_availability": [
+            "056",
+            "063",
+            "064",
+            "065",
+            "075",
+            "078",
+            "085",
+            "090",
+            "091",
+            "092",
+            "107",
+            "109",
+            "129",
+            "131",
+            "160",
+            "165",
+            "178",
+            "181",
+            "182",
+            "184",
+            "185",
+            "188",
+            "189",
+            "197",
+            "200",
+            "204",
+            "209",
+            "215",
+            "219",
+            "220",
+            "238"
+          ],
+          "product_list_price": 2360,
+          "product_quantity_step": 0,
+          "product_unit_of_measure": "UNI",
+          "product_large_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612394.jpg",
+          "product_format_quantity": 1,
+          "product_medium_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/medium/00612300/00612394.jpg",
+          "product_minimum_quantity": 0,
+          "discounts_payment_methods": [
+            {
+              "id": "83733859",
+              "comentarios": "",
+              "precioCuota": "$1534",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "catv00001255",
+              "display_name": "Frescos",
+              "path": "/categoria",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003251",
+              "display_name": "Yogures",
+              "path": "/categoria/catv00001255/catv00001295",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001295",
+              "display_name": "Lácteos",
+              "path": "/categoria/catv00001255",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003283",
+              "display_name": "Yogur Entero",
+              "path": "/categoria/catv00001255/catv00001295/catv00003251",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                },
+                {
+                  "id": "catv00003251",
+                  "display_name": "Yogures"
+                }
+              ]
+            }
+          ]
+        },
+        "value": "Yogur Griego sabor vainilla Yogurísimo 140g",
+        "is_slotted": false
+      },
+      {
+        "matched_terms": [
+          "yogur"
+        ],
+        "labels": {},
+        "data": {
+          "id": "prod00612393",
+          "url": "_/R-00612393-00612393-200",
+          "price": [
+            {
+              "id": "pl056_00612393",
+              "store": "056",
+              "listPrice": 3435,
+              "priceList": "priceList056",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl165_00612393",
+              "store": "165",
+              "listPrice": 3435,
+              "priceList": "priceList165",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl181_00612393",
+              "store": "181",
+              "listPrice": 3435,
+              "priceList": "priceList181",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl064_00612393",
+              "store": "064",
+              "listPrice": 3435,
+              "priceList": "priceList064",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl078_00612393",
+              "store": "078",
+              "listPrice": 3435,
+              "priceList": "priceList078",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl238_00612393",
+              "store": "238",
+              "listPrice": 3435,
+              "priceList": "priceList238",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl109_00612393",
+              "store": "109",
+              "listPrice": 3435,
+              "priceList": "priceList109",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl129_00612393",
+              "store": "129",
+              "listPrice": 3435,
+              "priceList": "priceList129",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl085_00612393",
+              "store": "085",
+              "listPrice": 3435,
+              "priceList": "priceList085",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl065_00612393",
+              "store": "065",
+              "listPrice": 3435,
+              "priceList": "priceList065",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl185_00612393",
+              "store": "185",
+              "listPrice": 3435,
+              "priceList": "priceList185",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl075_00612393",
+              "store": "075",
+              "listPrice": 3435,
+              "priceList": "priceList075",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl182_00612393",
+              "store": "182",
+              "listPrice": 3435,
+              "priceList": "priceList182",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl060_00612393",
+              "store": "060",
+              "listPrice": 2360,
+              "priceList": "priceList060",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 12421.05,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl200_00612393",
+              "store": "200",
+              "listPrice": 3435,
+              "priceList": "priceList200",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl220_00612393",
+              "store": "220",
+              "listPrice": 3435,
+              "priceList": "priceList220",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl197_00612393",
+              "store": "197",
+              "listPrice": 3435,
+              "priceList": "priceList197",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl184_00612393",
+              "store": "184",
+              "listPrice": 3435,
+              "priceList": "priceList184",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl189_00612393",
+              "store": "189",
+              "listPrice": 3435,
+              "priceList": "priceList189",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl209_00612393",
+              "store": "209",
+              "listPrice": 3435,
+              "priceList": "priceList209",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl090_00612393",
+              "store": "090",
+              "listPrice": 3435,
+              "priceList": "priceList090",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl178_00612393",
+              "store": "178",
+              "listPrice": 3435,
+              "priceList": "priceList178",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl215_00612393",
+              "store": "215",
+              "listPrice": 3435,
+              "priceList": "priceList215",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl107_00612393",
+              "store": "107",
+              "listPrice": 3435,
+              "priceList": "priceList107",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl204_00612393",
+              "store": "204",
+              "listPrice": 3435,
+              "priceList": "priceList204",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl092_00612393",
+              "store": "092",
+              "listPrice": 3435,
+              "priceList": "priceList092",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl061_00612393",
+              "store": "061",
+              "listPrice": 2880,
+              "priceList": "priceList061",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 15157.89,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl131_00612393",
+              "store": "131",
+              "listPrice": 3435,
+              "priceList": "priceList131",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl219_00612393",
+              "store": "219",
+              "listPrice": 3435,
+              "priceList": "priceList219",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl160_00612393",
+              "store": "160",
+              "listPrice": 3435,
+              "priceList": "priceList160",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl063_00612393",
+              "store": "063",
+              "listPrice": 3435,
+              "priceList": "priceList063",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl188_00612393",
+              "store": "188",
+              "listPrice": 3435,
+              "priceList": "priceList188",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            },
+            {
+              "id": "pl091_00612393",
+              "store": "091",
+              "listPrice": 3435,
+              "priceList": "priceList091",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 18078.94,
+              "priceWithoutTax": 2838.84
+            }
+          ],
+          "sku_id": "sku00612393",
+          "sku_plu": 612393,
+          "image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612393.jpg",
+          "sale_type": [
+            "2da Unid 70% DTO!! ",
+            "Todas las Ofertas"
+          ],
+          "discounts": [
+            {
+              "id": "38864027",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "70% 2da",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$2232.75",
+              "regularPriceText": "Precio Contado: $3435"
+            }
+          ],
+          "product_brand": "YOGURISIMO",
+          "product_is_noa": 0,
+          "product_format": "Kilo",
+          "sku_description": "Yogur Griego natural sin endulzar Yogurísimo 190g",
+          "product_main_ean": 7791337009998,
+          "sku_display_name": "Yogur Griego natural sin endulzar Yogurísimo 190g",
+          "product_weighable": 0,
+          "store_availability": [
+            "056",
+            "063",
+            "064",
+            "065",
+            "075",
+            "078",
+            "085",
+            "090",
+            "091",
+            "092",
+            "107",
+            "109",
+            "129",
+            "131",
+            "160",
+            "165",
+            "178",
+            "181",
+            "182",
+            "184",
+            "185",
+            "188",
+            "189",
+            "197",
+            "200",
+            "204",
+            "209",
+            "215",
+            "219",
+            "220",
+            "238"
+          ],
+          "product_list_price": 3435,
+          "product_quantity_step": 0,
+          "product_large_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612393.jpg",
+          "product_format_quantity": 1,
+          "product_unit_of_measure": "UNI",
+          "product_medium_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/medium/00612300/00612393.jpg",
+          "product_minimum_quantity": 0,
+          "discounts_payment_methods": [
+            {
+              "id": "83703243",
+              "comentarios": "",
+              "precioCuota": "$2232.75",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "catv00003283",
+              "display_name": "Yogur Entero",
+              "path": "/categoria/catv00001255/catv00001295/catv00003251",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                },
+                {
+                  "id": "catv00003251",
+                  "display_name": "Yogures"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001255",
+              "display_name": "Frescos",
+              "path": "/categoria",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001295",
+              "display_name": "Lácteos",
+              "path": "/categoria/catv00001255",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003251",
+              "display_name": "Yogures",
+              "path": "/categoria/catv00001255/catv00001295",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                }
+              ]
+            }
+          ]
+        },
+        "value": "Yogur Griego natural sin endulzar Yogurísimo 190g",
+        "is_slotted": false
+      },
+      {
+        "matched_terms": [
+          "yogur"
+        ],
+        "labels": {},
+        "data": {
+          "id": "prod00612397",
+          "url": "_/R-00612397-00612397-200",
+          "price": [
+            {
+              "id": "pl107_00612397",
+              "store": "107",
+              "listPrice": 2360,
+              "priceList": "priceList107",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl215_00612397",
+              "store": "215",
+              "listPrice": 2360,
+              "priceList": "priceList215",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl184_00612397",
+              "store": "184",
+              "listPrice": 2360,
+              "priceList": "priceList184",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl181_00612397",
+              "store": "181",
+              "listPrice": 2360,
+              "priceList": "priceList181",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl238_00612397",
+              "store": "238",
+              "listPrice": 2360,
+              "priceList": "priceList238",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl109_00612397",
+              "store": "109",
+              "listPrice": 2360,
+              "priceList": "priceList109",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl129_00612397",
+              "store": "129",
+              "listPrice": 2360,
+              "priceList": "priceList129",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl085_00612397",
+              "store": "085",
+              "listPrice": 2360,
+              "priceList": "priceList085",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl065_00612397",
+              "store": "065",
+              "listPrice": 2360,
+              "priceList": "priceList065",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl185_00612397",
+              "store": "185",
+              "listPrice": 2360,
+              "priceList": "priceList185",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl075_00612397",
+              "store": "075",
+              "listPrice": 2360,
+              "priceList": "priceList075",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl182_00612397",
+              "store": "182",
+              "listPrice": 2360,
+              "priceList": "priceList182",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl060_00612397",
+              "store": "060",
+              "listPrice": 1580,
+              "priceList": "priceList060",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 11285.71,
+              "priceWithoutTax": 1305.79
+            },
+            {
+              "id": "pl200_00612397",
+              "store": "200",
+              "listPrice": 2360,
+              "priceList": "priceList200",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl220_00612397",
+              "store": "220",
+              "listPrice": 2360,
+              "priceList": "priceList220",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl165_00612397",
+              "store": "165",
+              "listPrice": 2360,
+              "priceList": "priceList165",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl197_00612397",
+              "store": "197",
+              "listPrice": 2360,
+              "priceList": "priceList197",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl189_00612397",
+              "store": "189",
+              "listPrice": 2360,
+              "priceList": "priceList189",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl209_00612397",
+              "store": "209",
+              "listPrice": 2360,
+              "priceList": "priceList209",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl090_00612397",
+              "store": "090",
+              "listPrice": 2360,
+              "priceList": "priceList090",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl178_00612397",
+              "store": "178",
+              "listPrice": 2360,
+              "priceList": "priceList178",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl188_00612397",
+              "store": "188",
+              "listPrice": 2360,
+              "priceList": "priceList188",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl204_00612397",
+              "store": "204",
+              "listPrice": 2360,
+              "priceList": "priceList204",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl092_00612397",
+              "store": "092",
+              "listPrice": 2360,
+              "priceList": "priceList092",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl061_00612397",
+              "store": "061",
+              "listPrice": 1925,
+              "priceList": "priceList061",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 13750,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl131_00612397",
+              "store": "131",
+              "listPrice": 2360,
+              "priceList": "priceList131",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl219_00612397",
+              "store": "219",
+              "listPrice": 2360,
+              "priceList": "priceList219",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl160_00612397",
+              "store": "160",
+              "listPrice": 2360,
+              "priceList": "priceList160",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl063_00612397",
+              "store": "063",
+              "listPrice": 2360,
+              "priceList": "priceList063",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl091_00612397",
+              "store": "091",
+              "listPrice": 2360,
+              "priceList": "priceList091",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl056_00612397",
+              "store": "056",
+              "listPrice": 2360,
+              "priceList": "priceList056",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl064_00612397",
+              "store": "064",
+              "listPrice": 2360,
+              "priceList": "priceList064",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            },
+            {
+              "id": "pl078_00612397",
+              "store": "078",
+              "listPrice": 2360,
+              "priceList": "priceList078",
+              "saleImage1": "oferta.png",
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16857.14,
+              "priceWithoutTax": 1950.41
+            }
+          ],
+          "sku_id": "sku00612397",
+          "sku_plu": 612397,
+          "sale_type": [
+            "2da Unid 70% DTO!! ",
+            "Todas las Ofertas"
+          ],
+          "discounts": [
+            {
+              "id": "38866163",
+              "comments": "No acumulable con otras promos",
+              "takingText": "Llevando 2",
+              "discountText": "70% 2da",
+              "regularPrice": null,
+              "discountImage": null,
+              "discountPrice": "$1534.00",
+              "regularPriceText": "Precio Contado: $2360"
+            }
+          ],
+          "image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612397.jpg",
+          "product_brand": "YOGURISIMO",
+          "product_format": "Kilo",
+          "product_is_noa": 0,
+          "sku_description": "Yogur Griego sabor frutilla Yogurísimo 140g",
+          "sku_display_name": "Yogur Griego sabor frutilla Yogurísimo 140g",
+          "product_main_ean": 7791337009943,
+          "product_weighable": 0,
+          "product_list_price": 2360,
+          "store_availability": [
+            "056",
+            "063",
+            "064",
+            "065",
+            "075",
+            "078",
+            "085",
+            "090",
+            "091",
+            "092",
+            "107",
+            "109",
+            "129",
+            "131",
+            "160",
+            "165",
+            "178",
+            "181",
+            "182",
+            "184",
+            "185",
+            "188",
+            "189",
+            "197",
+            "200",
+            "204",
+            "209",
+            "215",
+            "219",
+            "220",
+            "238"
+          ],
+          "product_quantity_step": 0,
+          "product_large_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00612300/00612397.jpg",
+          "product_format_quantity": 1,
+          "product_unit_of_measure": "UNI",
+          "product_minimum_quantity": 0,
+          "product_medium_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/medium/00612300/00612397.jpg",
+          "discounts_payment_methods": [
+            {
+              "id": "83705347",
+              "comentarios": "",
+              "precioCuota": "$1534",
+              "cantidadCuotas": "1",
+              "imagenDescuento": "/content/images/cdigi/ofertas/pagando-con-todas-tarjetas.png"
+            }
+          ],
+          "groups": [
+            {
+              "group_id": "catv00003251",
+              "display_name": "Yogures",
+              "path": "/categoria/catv00001255/catv00001295",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001295",
+              "display_name": "Lácteos",
+              "path": "/categoria/catv00001255",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003283",
+              "display_name": "Yogur Entero",
+              "path": "/categoria/catv00001255/catv00001295/catv00003251",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                },
+                {
+                  "id": "catv00003251",
+                  "display_name": "Yogures"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001255",
+              "display_name": "Frescos",
+              "path": "/categoria",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                }
+              ]
+            }
+          ]
+        },
+        "value": "Yogur Griego sabor frutilla Yogurísimo 140g",
+        "is_slotted": false
+      },
+      {
+        "matched_terms": [
+          "yogur"
+        ],
+        "labels": {},
+        "data": {
+          "id": "prod00604493",
+          "url": "_/R-00604493-00604493-200",
+          "price": [
+            {
+              "id": "pl209_00604493",
+              "store": "209",
+              "listPrice": 3565,
+              "priceList": "priceList209",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl109_00604493",
+              "store": "109",
+              "listPrice": 3565,
+              "priceList": "priceList109",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl188_00604493",
+              "store": "188",
+              "listPrice": 3565,
+              "priceList": "priceList188",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl178_00604493",
+              "store": "178",
+              "listPrice": 3565,
+              "priceList": "priceList178",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl065_00604493",
+              "store": "065",
+              "listPrice": 3565,
+              "priceList": "priceList065",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl165_00604493",
+              "store": "165",
+              "listPrice": 3565,
+              "priceList": "priceList165",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl060_00604493",
+              "store": "060",
+              "listPrice": 2265,
+              "priceList": "priceList060",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 12942.85,
+              "priceWithoutTax": 1871.9
+            },
+            {
+              "id": "pl219_00604493",
+              "store": "219",
+              "listPrice": 3565,
+              "priceList": "priceList219",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl182_00604493",
+              "store": "182",
+              "listPrice": 3565,
+              "priceList": "priceList182",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl129_00604493",
+              "store": "129",
+              "listPrice": 3565,
+              "priceList": "priceList129",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl184_00604493",
+              "store": "184",
+              "listPrice": 3565,
+              "priceList": "priceList184",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl064_00604493",
+              "store": "064",
+              "listPrice": 3565,
+              "priceList": "priceList064",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl181_00604493",
+              "store": "181",
+              "listPrice": 3565,
+              "priceList": "priceList181",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl085_00604493",
+              "store": "085",
+              "listPrice": 3565,
+              "priceList": "priceList085",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl075_00604493",
+              "store": "075",
+              "listPrice": 3565,
+              "priceList": "priceList075",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl238_00604493",
+              "store": "238",
+              "listPrice": 3565,
+              "priceList": "priceList238",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl197_00604493",
+              "store": "197",
+              "listPrice": 3565,
+              "priceList": "priceList197",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl204_00604493",
+              "store": "204",
+              "listPrice": 3565,
+              "priceList": "priceList204",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl056_00604493",
+              "store": "056",
+              "listPrice": 3565,
+              "priceList": "priceList056",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl189_00604493",
+              "store": "189",
+              "listPrice": 3565,
+              "priceList": "priceList189",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl160_00604493",
+              "store": "160",
+              "listPrice": 3565,
+              "priceList": "priceList160",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl078_00604493",
+              "store": "078",
+              "listPrice": 3565,
+              "priceList": "priceList078",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl107_00604493",
+              "store": "107",
+              "listPrice": 3565,
+              "priceList": "priceList107",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl215_00604493",
+              "store": "215",
+              "listPrice": 3565,
+              "priceList": "priceList215",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl220_00604493",
+              "store": "220",
+              "listPrice": 3565,
+              "priceList": "priceList220",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl091_00604493",
+              "store": "091",
+              "listPrice": 3565,
+              "priceList": "priceList091",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl063_00604493",
+              "store": "063",
+              "listPrice": 3565,
+              "priceList": "priceList063",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl092_00604493",
+              "store": "092",
+              "listPrice": 3565,
+              "priceList": "priceList092",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl131_00604493",
+              "store": "131",
+              "listPrice": 3565,
+              "priceList": "priceList131",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl061_00604493",
+              "store": "061",
+              "listPrice": 2965,
+              "priceList": "priceList061",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 16942.85,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl200_00604493",
+              "store": "200",
+              "listPrice": 3565,
+              "priceList": "priceList200",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl185_00604493",
+              "store": "185",
+              "listPrice": 3565,
+              "priceList": "priceList185",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            },
+            {
+              "id": "pl090_00604493",
+              "store": "090",
+              "listPrice": 3565,
+              "priceList": "priceList090",
+              "saleImage1": null,
+              "saleImage2": null,
+              "saleImage3": null,
+              "formatPrice": 20371.42,
+              "priceWithoutTax": 2946.28
+            }
+          ],
+          "sku_id": "sku00604493",
+          "sku_plu": 604493,
+          "image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00604400/00604493.jpg",
+          "discounts": [],
+          "sale_type": [],
+          "product_brand": "SER",
+          "product_format": "Kilo",
+          "product_is_noa": 0,
+          "sku_description": "Yogur batido Ser PRO+ con proteínas sabor natural 175g",
+          "product_main_ean": 7791337009660,
+          "sku_display_name": "Yogur batido Ser PRO+ con proteínas sabor natural 175g",
+          "product_weighable": 0,
+          "store_availability": [
+            "056",
+            "063",
+            "064",
+            "065",
+            "075",
+            "078",
+            "085",
+            "090",
+            "091",
+            "092",
+            "107",
+            "109",
+            "129",
+            "131",
+            "160",
+            "165",
+            "178",
+            "181",
+            "182",
+            "184",
+            "188",
+            "189",
+            "197",
+            "200",
+            "204",
+            "209",
+            "215",
+            "219",
+            "220",
+            "238"
+          ],
+          "product_list_price": 3565,
+          "product_quantity_step": 0,
+          "product_unit_of_measure": "UNI",
+          "product_large_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/large/00604400/00604493.jpg",
+          "product_format_quantity": 1,
+          "product_medium_image_url": "https://static.cotodigital3.com.ar/sitios/fotos/medium/00604400/00604493.jpg",
+          "product_minimum_quantity": 0,
+          "discounts_payment_methods": [],
+          "groups": [
+            {
+              "group_id": "catv00001255",
+              "display_name": "Frescos",
+              "path": "/categoria",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003251",
+              "display_name": "Yogures",
+              "path": "/categoria/catv00001255/catv00001295",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00003284",
+              "display_name": "Yogur Descremado",
+              "path": "/categoria/catv00001255/catv00001295/catv00003251",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                },
+                {
+                  "id": "catv00001295",
+                  "display_name": "Lácteos"
+                },
+                {
+                  "id": "catv00003251",
+                  "display_name": "Yogures"
+                }
+              ]
+            },
+            {
+              "group_id": "catv00001295",
+              "display_name": "Lácteos",
+              "path": "/categoria/catv00001255",
+              "path_list": [
+                {
+                  "id": "categoria",
+                  "display_name": "Categorias"
+                },
+                {
+                  "id": "catv00001255",
+                  "display_name": "Frescos"
+                }
+              ]
+            }
+          ]
+        },
+        "value": "Yogur batido Ser PRO+ con proteínas sabor natural 175g",
+        "is_slotted": false
+      }
+    ],
+    "sort_options": [
+      {
+        "sort_by": "relevance",
+        "display_name": "Lo más relevante",
+        "sort_order": "descending",
+        "status": "selected",
+        "hidden": false
+      },
+      {
+        "sort_by": "name",
+        "display_name": "Nombre de A a Z",
+        "sort_order": "ascending",
+        "status": "",
+        "hidden": false
+      },
+      {
+        "sort_by": "name",
+        "display_name": "Nombre de Z a A",
+        "sort_order": "descending",
+        "status": "",
+        "hidden": false
+      },
+      {
+        "sort_by": "price",
+        "display_name": "Precio: de menor a mayor",
+        "sort_order": "ascending",
+        "status": "",
+        "hidden": false
+      },
+      {
+        "sort_by": "price",
+        "display_name": "Precio: de mayor a menor",
+        "sort_order": "descending",
+        "status": "",
+        "hidden": false
+      }
+    ],
+    "refined_content": [],
+    "total_num_results": 931,
+    "features": [
+      {
+        "feature_name": "a_a_test",
+        "display_name": "a_a_test",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "auto_generated_refined_query_rules",
+        "display_name": "Affinity Engine",
+        "enabled": true,
+        "variant": {
+          "name": "default_rules",
+          "display_name": "Default weights"
+        }
+      },
+      {
+        "feature_name": "custom_autosuggest_ui",
+        "display_name": "custom_autosuggest_ui",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "disable_test_only_global_rules_browse",
+        "display_name": "Disables global refined filter rules with include_in_test=1 column",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "disable_test_only_global_rules_search",
+        "display_name": "Disables global refined query rules with include_in_test=1 column",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "disable_test_only_tag_rules",
+        "display_name": "disable test only tag rules",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "enable_campaigns_context_selector_expression",
+        "display_name": "enable campaigns context selector expression",
+        "enabled": true,
+        "variant": null
+      },
+      {
+        "feature_name": "enable_holdout_groups",
+        "display_name": "enable holdout groups",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "filter_items",
+        "display_name": "Filter-item boosts",
+        "enabled": true,
+        "variant": {
+          "name": "filter_items_w_atcs_and_purchases",
+          "display_name": "filter_items_w_atcs_and_purchases"
+        }
+      },
+      {
+        "feature_name": "manual_searchandizing",
+        "display_name": "Searchandizing",
+        "enabled": true,
+        "variant": null
+      },
+      {
+        "feature_name": "personalization",
+        "display_name": "Personalization",
+        "enabled": true,
+        "variant": {
+          "name": "default_personalization",
+          "display_name": "Default Personalization"
+        }
+      },
+      {
+        "feature_name": "query_items",
+        "display_name": "Learn To Rank",
+        "enabled": true,
+        "variant": {
+          "name": "query_items_ctr_and_l2r",
+          "display_name": "CTR & LTR"
+        }
+      },
+      {
+        "feature_name": "recommendations_merge_allowlist_rules",
+        "display_name": "recommendations_merge_allowlist_rules",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "refined_tag_rules",
+        "display_name": "refined_tag_rules",
+        "enabled": true,
+        "variant": null
+      },
+      {
+        "feature_name": "reranker_transformations_autocomplete",
+        "display_name": "reranker_transformations_autocomplete",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "reranker_transformations_browse",
+        "display_name": "reranker_transformations_browse",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "reranker_transformations_search",
+        "display_name": "reranker_transformations_search",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "use_ces_blending",
+        "display_name": "use_ces_blending",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "use_enriched_attributes_as_fuzzy_searchable",
+        "display_name": "use_enriched_attributes_as_fuzzy_searchable",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "use_llm_label_sort",
+        "display_name": "use_llm_label_sort",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "use_reranker_service_for_all",
+        "display_name": "[DEPRECATED] Use reranker service to rerank search and browse results",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "use_reranker_service_for_browse",
+        "display_name": "Use reranker service to rerank browse / collections results",
+        "enabled": true,
+        "variant": {
+          "name": "browse_reranker_v0_top100",
+          "display_name": "browse_reranker_v0_top100"
+        }
+      },
+      {
+        "feature_name": "use_reranker_service_for_search",
+        "display_name": "Use reranker service to rerank search results",
+        "enabled": false,
+        "variant": null
+      },
+      {
+        "feature_name": "variation_selection",
+        "display_name": "variation_selection",
+        "enabled": false,
+        "variant": null
+      }
+    ],
+    "related_searches": [
+      {
+        "query": "aceite",
+        "image_url": ""
+      },
+      {
+        "query": "atun",
+        "image_url": ""
+      },
+      {
+        "query": "fideos",
+        "image_url": ""
+      },
+      {
+        "query": "yerba",
+        "image_url": ""
+      },
+      {
+        "query": "yogurt bebible",
+        "image_url": ""
+      },
+      {
+        "query": "yogurt con fruta",
+        "image_url": ""
+      },
+      {
+        "query": "yogurt frutilla",
+        "image_url": ""
+      },
+      {
+        "query": "yogurt sin lactosa",
+        "image_url": ""
+      }
+    ],
+    "related_browse_pages": [
+      {
+        "filter_name": "group_id",
+        "filter_value": "catv00001295",
+        "display_name": "lácteos",
+        "image_url": ""
+      },
+      {
+        "filter_name": "group_id",
+        "filter_value": "catv00003251",
+        "display_name": "yogures",
+        "image_url": ""
+      },
+      {
+        "filter_name": "group_id",
+        "filter_value": "catv00003283",
+        "display_name": "yogur entero",
+        "image_url": ""
+      },
+      {
+        "filter_name": "group_id",
+        "filter_value": "catv00003284",
+        "display_name": "yogur descremado",
+        "image_url": ""
+      },
+      {
+        "filter_name": "group_id",
+        "filter_value": "catv00004448",
+        "display_name": "yogur sin lactosa",
+        "image_url": ""
+      }
+    ],
+    "experiments": []
+  },
+  "result_id": "c319c9ac-18a4-47a6-b44c-aee6f134d6d1",
+  "request": {
+    "sort_by": "relevance",
+    "sort_order": "descending",
+    "page": 1,
+    "num_results_per_page": 5,
+    "blacklist_rules": true,
+    "term": "yogurt",
+    "fmt_options": {
+      "groups_start": "current",
+      "groups_max_depth": 1,
+      "show_hidden_facets": false,
+      "show_hidden_fields": false,
+      "show_protected_facets": false
+    },
+    "section": "Products",
+    "features": {
+      "query_items": true,
+      "a_a_test": false,
+      "auto_generated_refined_query_rules": true,
+      "manual_searchandizing": true,
+      "personalization": true,
+      "filter_items": true,
+      "use_reranker_service_for_search": false,
+      "use_reranker_service_for_browse": true,
+      "use_reranker_service_for_all": false,
+      "custom_autosuggest_ui": false,
+      "disable_test_only_global_rules_search": false,
+      "disable_test_only_global_rules_browse": false,
+      "use_enriched_attributes_as_fuzzy_searchable": false,
+      "recommendations_merge_allowlist_rules": false,
+      "enable_campaigns_context_selector_expression": true,
+      "enable_holdout_groups": false,
+      "refined_tag_rules": true,
+      "use_ces_blending": false,
+      "variation_selection": false,
+      "reranker_transformations_search": false,
+      "use_llm_label_sort": false,
+      "reranker_transformations_browse": false,
+      "reranker_transformations_autocomplete": false,
+      "disable_test_only_tag_rules": false
+    },
+    "feature_variants": {
+      "query_items": "query_items_ctr_and_l2r",
+      "a_a_test": null,
+      "auto_generated_refined_query_rules": "default_rules",
+      "manual_searchandizing": null,
+      "personalization": "default_personalization",
+      "filter_items": "filter_items_w_atcs_and_purchases",
+      "use_reranker_service_for_search": null,
+      "use_reranker_service_for_browse": "browse_reranker_v0_top100",
+      "use_reranker_service_for_all": null,
+      "custom_autosuggest_ui": null,
+      "disable_test_only_global_rules_search": null,
+      "disable_test_only_global_rules_browse": null,
+      "use_enriched_attributes_as_fuzzy_searchable": null,
+      "recommendations_merge_allowlist_rules": null,
+      "enable_campaigns_context_selector_expression": null,
+      "enable_holdout_groups": null,
+      "refined_tag_rules": null,
+      "use_ces_blending": null,
+      "variation_selection": null,
+      "reranker_transformations_search": null,
+      "use_llm_label_sort": null,
+      "reranker_transformations_browse": null,
+      "reranker_transformations_autocomplete": null,
+      "disable_test_only_tag_rules": null
+    },
+    "searchandized_items": {}
+  }
+}

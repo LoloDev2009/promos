@@ -1,0 +1,7 @@
+[Unit]
+Description=Seguimiento diario de promos de supermercados
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/supermarket/app
+ExecStart=/usr/bin/env node track.js

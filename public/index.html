@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promos súper</title>
+<style>
+  :root {
+    --bg:#f6f7f9; --card:#fff; --text:#1a1d21; --muted:#6b7280; --line:#e5e7eb;
+    --accent:#0b6bcb; --good:#0a7d4b; --warn:#b45309; --bad:#b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --card:#1a1f26; --text:#e8eaed; --muted:#9aa3af; --line:#2a313a;
+            --accent:#5aa9f5; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:980px; margin:0 auto; padding:16px; }
+  h1 { font-size:22px; margin:8px 0 10px; }
+  .tabs { display:flex; gap:6px; margin-bottom:12px; }
+  .tab { background:var(--card); color:var(--text); border:1px solid var(--line); padding:8px 14px; border-radius:10px; }
+  .tab.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .search { display:flex; gap:8px; }
+  input[type=search] { flex:1; padding:11px 12px; font-size:16px; border:1px solid var(--line);
+    border-radius:10px; background:var(--card); color:var(--text); }
+  button { padding:11px 16px; border:0; border-radius:10px; background:var(--accent); color:#fff;
+    font-size:15px; cursor:pointer; }
+  .controls { display:flex; flex-wrap:wrap; gap:10px 16px; margin:12px 0; align-items:center; color:var(--muted); font-size:14px; }
+  .controls label { display:flex; gap:6px; align-items:center; cursor:pointer; }
+  select { padding:6px 8px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); }
+  .estado { color:var(--muted); font-size:13px; margin:6px 0 12px; }
+  .estado .err { color:var(--bad); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; display:flex; gap:12px; }
+  .card img { width:72px; height:72px; object-fit:contain; flex:none; border-radius:8px; background:#fff; }
+  .info { min-width:0; flex:1; }
+  .nombre { font-weight:600; font-size:14px; margin:0 0 4px; overflow-wrap:anywhere; }
+  .tienda { display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    padding:1px 7px; border-radius:99px; border:1px solid var(--line); color:var(--muted); margin-bottom:4px; }
+  .precio { font-size:20px; font-weight:700; }
+  .tachado { color:var(--muted); text-decoration:line-through; font-size:13px; margin-left:6px; }
+  .unidad { color:var(--muted); font-size:13px; }
+  .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:6px; margin:4px 4px 0 0;
+    background:color-mix(in srgb, var(--good) 15%, transparent); color:var(--good); font-weight:600; }
+  .badge.warn { background:color-mix(in srgb, var(--warn) 16%, transparent); color:var(--warn); }
+  .badge.tag { background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent); }
+  a { color:inherit; text-decoration:none; }
+  a:hover .nombre { text-decoration:underline; }
+  .vacio { text-align:center; color:var(--muted); padding:30px 0; grid-column:1/-1; }
+  .seccion { margin:22px 0 6px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .seccion h2 { font-size:17px; margin:0; text-transform:capitalize; }
+  .seccion small { color:var(--muted); }
+  .oculto { display:none; }
+  .reco { background:color-mix(in srgb, var(--good) 12%, var(--card)); border:1px solid var(--good); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .dia { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
+  .dia h3 { margin:0 0 6px; font-size:15px; text-transform:capitalize; }
+  .dia.hoy { border-color:var(--accent); }
+  .ben { font-size:14px; margin:3px 0; }
+  .ben small { color:var(--muted); }
+  .venc { font-size:13px; color:var(--warn); margin-top:4px; }
+  .nota { color:var(--muted); font-size:13px; margin:8px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🛒 Promos súper</h1>
+  <div class="tabs">
+    <button class="tab on" id="tabBuscar" type="button">Buscar</button>
+    <button class="tab" id="tabLista" type="button">Mi lista</button>
+    <button class="tab" id="tabCal" type="button">Cuándo comprar</button>
+  </div>
+
+  <div class="controls">
+    <label><input type="checkbox" id="carrefour" checked> Carrefour</label>
+    <label><input type="checkbox" id="dia" checked> Día</label>
+    <label><input type="checkbox" id="coto" checked> Coto</label>
+    <label id="lblEstricto"><input type="checkbox" id="estricto" checked> Solo lo que busqué</label>
+    <label><input type="checkbox" id="tarjeta" checked> Cuento promos con tarjeta / billetera</label>
+    <label id="lblOrden">Ordenar por
+      <select id="orden">
+        <option value="unidad">Precio por kg/litro</option>
+        <option value="precio">Precio final</option>
+        <option value="desc">Mayor descuento</option>
+      </select>
+    </label>
+  </div>
+
+  <section id="vistaBuscar">
+    <form class="search" id="form">
+      <input type="search" id="q" placeholder="Buscá un producto (yerba, leche, arroz…)" autofocus>
+      <button>Buscar</button>
+    </form>
+    <div id="estado" class="estado"></div>
+    <div id="resultados" class="grid"></div>
+    <div id="ocultos" class="nota"></div>
+  </section>
+
+  <section id="vistaCal" class="oculto">
+    <div id="estadoCal" class="estado"></div>
+    <div id="cal"></div>
+  </section>
+
+  <section id="vistaLista" class="oculto">
+    <div id="estadoLista" class="estado"></div>
+    <div id="lista"></div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const TIENDAS = ["carrefour", "dia", "coto"];
+let datos = [];
+let lista = null;
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const peso = (n) => "$" + Math.round(n).toLocaleString("es-AR");
+const hoy = () => new Date().toLocaleDateString("sv"); // YYYY-MM-DD en hora local
+const fechaCorta = (iso) => { const [, m, d] = iso.split("-"); return `${+d}/${+m}`; };
+const activas = () => TIENDAS.filter((t) => $(t).checked);
+
+function mejorPromo(it, conTarjeta) {
+  let best = null;
+  for (const p of it.promos || []) {
+    if (p.hasta && p.hasta < hoy()) continue;
+    if (p.requierePago && !conTarjeta) continue;
+    if (!best || p.pctEfectivo > best.pctEfectivo) best = p;
+  }
+  return best;
+}
+function calcular(it, conTarjeta) {
+  const promo = mejorPromo(it, conTarjeta);
+  const final = it.precio * (1 - (promo ? promo.pctEfectivo : 0) / 100);
+  return { promo, final, porUnidad: it.cantidad ? final / it.cantidad : null };
+}
+
+function diasPara(iso) {
+  return Math.round((Date.parse(iso) - Date.parse(hoy())) / 86400000);
+}
+
+function tarjeta(i, c) {
+  const badges = [];
+  if (i.descuentoPct > 0) badges.push(`<span class="badge">-${i.descuentoPct}%</span>`);
+  if (c.promo) {
+    let txt = esc(c.promo.tipo || "Promo");
+    if (c.promo.minUnidades > 1) txt += ` · llevando ${c.promo.minUnidades}`;
+    badges.push(`<span class="badge">${txt}</span>`);
+    if (c.promo.tope) badges.push(`<span class="badge tag">máx ${c.promo.tope}</span>`);
+    if (c.promo.requierePago) badges.push(`<span class="badge tag">con tarjeta/billetera</span>`);
+    if (c.promo.hasta) {
+      const d = diasPara(c.promo.hasta);
+      const txtV = d <= 0 ? "¡vence hoy!" : d === 1 ? "vence mañana" : "hasta " + fechaCorta(c.promo.hasta);
+      badges.push(`<span class="badge ${d <= 1 ? "warn" : "tag"}">${txtV}</span>`);
+    }
+  }
+  const s = i.senales;
+  if (s && s.diasDatos >= 2) {
+    if (s.enPromoDesde && s.diasEnPromo >= 1) badges.push(`<span class="badge tag">en promo hace ${s.diasEnPromo} d</span>`);
+    else if (s.enPromoDesde === hoy()) badges.push(`<span class="badge tag">promo nueva</span>`);
+    if (s.esMinimo) badges.push(`<span class="badge">mínimo registrado</span>`);
+    else if (s.vsPromedioPct !== null && s.vsPromedioPct <= -5) badges.push(`<span class="badge">${Math.abs(s.vsPromedioPct)}% bajo su promedio</span>`);
+  }
+  for (const e of i.etiquetas || []) badges.push(`<span class="badge tag">${esc(e)}</span>`);
+
+  const tachado = c.promo ? `<span class="tachado">${peso(i.precio)}</span>` :
+    (i.precioLista > i.precio ? `<span class="tachado">${peso(i.precioLista)}</span>` : "");
+  const unidad = c.porUnidad ? `<div class="unidad">${peso(c.porUnidad)} / ${i.unidad}</div>` : "";
+  return `<a class="card" href="${esc(i.link)}" target="_blank" rel="noopener">
+    ${i.imagen ? `<img loading="lazy" src="${esc(i.imagen)}" alt="">` : ""}
+    <div class="info">
+      <span class="tienda">${esc(i.tienda)}</span>
+      <p class="nombre">${esc(i.nombre)}</p>
+      <div><span class="precio">${peso(c.final)}</span>${tachado}</div>
+      ${unidad}
+      <div>${badges.join("")}</div>
+    </div>
+  </a>`;
+}
+
+/* ---------- Buscar ---------- */
+function renderBuscar() {
+  const conTarjeta = $("tarjeta").checked;
+  const act = activas();
+  const deTiendas = datos.filter((i) => act.includes(i.tienda));
+  // "Solo lo que busqué": el producto es lo buscado, no solo lo contiene ("dulce de leche" al buscar leche)
+  const exacto = (i) => !i.rel || (i.rel.coincide && i.rel.pos <= 1);
+  const visibles = $("estricto").checked ? deTiendas.filter(exacto) : deTiendas;
+  const ocultos = deTiendas.length - visibles.length;
+  $("ocultos").innerHTML = ocultos > 0
+    ? `Ocultos ${ocultos} productos que solo contienen la palabra (ej. "dulce de leche" al buscar leche). Desmarcá "Solo lo que busqué" para verlos.` : "";
+  const filas = visibles.map((i) => ({ i, c: calcular(i, conTarjeta) }));
+  const orden = $("orden").value;
+  filas.sort((a, b) => {
+    if (orden === "unidad") return (a.c.porUnidad ?? Infinity) - (b.c.porUnidad ?? Infinity);
+    if (orden === "desc") {
+      const da = Math.max(a.i.descuentoPct, a.c.promo?.pctEfectivo || 0);
+      const db = Math.max(b.i.descuentoPct, b.c.promo?.pctEfectivo || 0);
+      return db - da;
+    }
+    return a.c.final - b.c.final;
+  });
+  $("resultados").innerHTML = filas.length ? filas.map(({ i, c }) => tarjeta(i, c)).join("")
+    : (pendientes > 0 ? "" : `<div class="vacio">Sin resultados.</div>`);
+}
+
+let tokenBusqueda = 0;
+let pendientes = 0;
+async function buscar(e) {
+  e?.preventDefault();
+  const q = $("q").value.trim();
+  if (q.length < 2) return;
+  const token = ++tokenBusqueda;
+  datos = [];
+  pendientes = TIENDAS.length;
+  $("resultados").innerHTML = "";
+  $("ocultos").innerHTML = "";
+  const estados = {};
+  TIENDAS.forEach((t) => (estados[t] = `${t}: buscando…`));
+  const pintar = () => ($("estado").innerHTML = TIENDAS.map((t) => estados[t]).join(" · "));
+  pintar();
+
+  // Una consulta por tienda, en paralelo: cada una aparece apenas termina, sin esperar a la más lenta
+  await Promise.all(TIENDAS.map(async (t) => {
+    const t0 = performance.now();
+    try {
+      const r = await fetch(`/api/buscar?q=${encodeURIComponent(q)}&tiendas=${t}`);
+      const j = await r.json();
+      if (token !== tokenBusqueda) return;
+      if (!r.ok) throw new Error(j.error || "Error");
+      const info = j.tiendas[t];
+      if (!info.ok) throw new Error(info.error);
+      datos = datos.filter((i) => i.tienda !== t).concat(j.items);
+      estados[t] = `${t}: ${info.cantidad}${info.cache ? " (guardado)" : ""} · ${((performance.now() - t0) / 1000).toFixed(1)} s`;
+    } catch (err) {
+      if (token !== tokenBusqueda) return;
+      estados[t] = `<span class="err">${t}: ${esc(err.message)}</span>`;
+    }
+    pendientes--;
+    pintar();
+    renderBuscar();
+  }));
+}
+
+/* ---------- Mi lista ---------- */
+function renderLista() {
+  if (!lista) return;
+  const conTarjeta = $("tarjeta").checked;
+  const act = activas();
+  if (!lista.terminos.length) {
+    $("lista").innerHTML = `<div class="vacio">La lista está vacía. Agregá productos en watchlist.json.</div>`;
+    return;
+  }
+  const maxDias = Math.max(0, ...lista.terminos.flatMap((t) => t.items.map((i) => i.senales?.diasDatos || 0)));
+  $("estadoLista").textContent = maxDias < 3
+    ? "Todavía hay poco historial: las señales (mínimo registrado, promo hace N días) mejoran con los días de seguimiento."
+    : `Historial de hasta ${maxDias} días.`;
+
+  $("lista").innerHTML = lista.terminos.map((t) => {
+    const filas = t.items.filter((i) => act.includes(i.tienda)).map((i) => ({ i, c: calcular(i, conTarjeta) }))
+      .sort((a, b) => (a.c.porUnidad ?? Infinity) - (b.c.porUnidad ?? Infinity)).slice(0, 5);
+    const act8 = t.actualizado ? new Date(t.actualizado).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" }) : null;
+    return `<div class="seccion"><h2>${esc(t.termino)}</h2><small>${act8 ? "actualizado " + act8 : "sin datos todavía — corré node track.js"}</small></div>
+      <div class="grid">${filas.length ? filas.map(({ i, c }) => tarjeta(i, c)).join("") : `<div class="vacio">Sin datos.</div>`}</div>`;
+  }).join("");
+}
+
+async function cargarLista() {
+  $("estadoLista").textContent = "Cargando…";
+  try {
+    lista = await (await fetch("/api/lista")).json();
+    renderLista();
+  } catch (e) {
+    $("estadoLista").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+  }
+}
+
+/* ---------- Cuándo comprar ---------- */
+let cal = null;
+const fechaDia = (iso) => `${new Date(iso + "T12:00:00").toLocaleDateString("es-AR", { weekday: "long" })} ${fechaCorta(iso)}`;
+function lineaBeneficio(b) {
+  const tope = b.tope ? `tope ${peso(b.tope)}${b.topePeriodo ? " " + b.topePeriodo : ""}` : "sin tope";
+  return `<div class="ben"><b>${esc(b.tienda)}</b> · ${b.pct}%${b.adicional ? " adicional" : ""} con ${esc(b.medio)} <small>· ${tope}${b.hasta ? " · hasta " + fechaCorta(b.hasta) : ""}${b.verificar ? " · verificar" : ""}</small></div>`;
+}
+function renderCal() {
+  if (!cal) return;
+  const act = activas();
+  const notas = [];
+  if (!cal.misMedios.length) notas.push("Mostrando beneficios de todos los medios de pago. Poné los tuyos en <code>misMedios</code> de beneficios.json para filtrar.");
+  if (!cal.hayDatosVigentes) notas.push("No hay beneficios vigentes cargados. Actualizá beneficios.json con los del mes.");
+  if (cal.vencenPronto.length) notas.push(`Vencen en los próximos 3 días: ${cal.vencenPronto.map((b) => esc(b.tienda) + " " + esc(b.medio)).join(", ")}.`);
+  $("estadoCal").innerHTML = notas.map((n) => `<div class="nota">${n}</div>`).join("");
+
+  const r = cal.recomendado && act.includes(cal.recomendado.tienda) ? cal.recomendado : null;
+  const reco = r ? `<div class="reco"><b>Mejor día de la semana:</b> ${esc(fechaDia(r.fecha))} en <b>${esc(r.tienda)}</b>, ${r.pct}% con ${esc(r.medio)}
+      <small>(${r.tope ? "tope " + peso(r.tope) + (r.topePeriodo ? " " + r.topePeriodo : "") : "sin tope"}${r.verificar ? " · verificar" : ""})</small></div>` : "";
+
+  const dias = cal.dias.map((d) => {
+    const bs = d.beneficios.filter((b) => act.includes(b.tienda));
+    const venc = (d.vencen || []).filter((v) => act.includes(v.tienda));
+    return `<div class="dia ${d.fecha === cal.hoy ? "hoy" : ""}"><h3>${esc(fechaDia(d.fecha))}${d.fecha === cal.hoy ? " · hoy" : ""}</h3>
+      ${bs.length ? bs.map(lineaBeneficio).join("") : `<div class="ben"><small>Sin beneficios cargados para este día.</small></div>`}
+      ${venc.length ? `<div class="venc">⏳ Vencen promos de tu lista: ${venc.map((v) => `${esc(v.tienda)} (${v.cantidad})`).join(", ")}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  const sinDia = cal.sinDia.filter((b) => act.includes(b.tienda));
+  const aparte = sinDia.length ? `<div class="dia"><h3>Día a confirmar</h3>${sinDia.map(lineaBeneficio).join("")}
+    <div class="ben"><small>${esc(sinDia.map((b) => b.detalle).filter(Boolean)[0] || "")}</small></div></div>` : "";
+  $("cal").innerHTML = reco + dias + aparte;
+}
+async function cargarCal() {
+  try {
+    cal = await (await fetch("/api/calendario?dias=7")).json();
+    renderCal();
+  } catch (e) {
+    $("estadoCal").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+  }
+}
+
+function ir(vista) {
+  $("vistaBuscar").classList.toggle("oculto", vista !== "buscar");
+  $("vistaLista").classList.toggle("oculto", vista !== "lista");
+  $("vistaCal").classList.toggle("oculto", vista !== "cal");
+  $("lblOrden").classList.toggle("oculto", vista !== "buscar");
+  $("lblEstricto").classList.toggle("oculto", vista !== "buscar");
+  $("tabBuscar").classList.toggle("on", vista === "buscar");
+  $("tabLista").classList.toggle("on", vista === "lista");
+  $("tabCal").classList.toggle("on", vista === "cal");
+  if (vista === "lista") cargarLista();
+  if (vista === "cal") cargarCal();
+}
+
+$("form").addEventListener("submit", buscar);
+$("tabBuscar").addEventListener("click", () => ir("buscar"));
+$("tabLista").addEventListener("click", () => ir("lista"));
+$("tabCal").addEventListener("click", () => ir("cal"));
+[...TIENDAS, "estricto", "tarjeta", "orden"].forEach((id) => $(id).addEventListener("change", () => { renderBuscar(); renderLista(); renderCal(); }));
+</script>
+</body>
+</html>
