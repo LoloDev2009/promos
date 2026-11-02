@@ -63,7 +63,7 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
      prod("6", "Yerba fantasma 500 g.", 1500, 1500, { stock: 9999 })],
     { 1: ["2do al 70% Tarjeta Carrefour o Cuenta digital Max 8 Combinable 23 al 29.10 UNION"], 2: [textoVence] }, ["6"]);
   const dia = fakeVtex(
-    [prod("9", "Yerba Mañanita 500 Gr.", 1990, 3100, { cluster: { 0: "Ahorrames" } }), prod("8", "Yerba Rosamonte 1 Kg", 4490, 4490),
+    [prod("9", "Yerba Mañanita 500 Gr.", 1990, 3100, { cluster: { 0: "Ahorrames", 1: "Ahorrames" } }), prod("8", "Yerba Rosamonte 1 Kg", 4490, 4490),
      prod("7", "Yerba Día agotada 500 Gr.", 1200, 1200, { stock: 100 })], {}, ["7"]);
   const cotoSrv = fakeConstructor([
     cotoProd(),
@@ -112,7 +112,7 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(union.unidad, "kg");
   const man = j.items.find((i) => i.nombre.includes("Mañanita"));
   assert.equal(man.descuentoPct, 36);
-  assert.deepEqual(man.etiquetas, ["Ahorrames"]);
+  assert.deepEqual(man.etiquetas, ["Ahorrames"], "Día conserva su campaña, sin repetidos");
   assert.equal(j.items.find((i) => i.nombre.includes("Rosamonte")).cantidad, 1);
 
   // Coto: parser con la forma real
@@ -180,10 +180,11 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
 
   // ---- Tiendas nuevas (Jumbo / Disco / Vea) y reglas por tienda ----
   const vtexMod = require("../scrapers/vtex");
-  for (const k of ["jumbo", "disco", "vea"]) {
-    assert.equal(vtexMod.TIENDAS[k].sc, null, `${k}: no se manda sc (da 400)`);
-    assert.equal(vtexMod.TIENDAS[k].promos, "pendiente", `${k}: promos todavía sin leer`);
-  }
+  for (const k of ["jumbo", "disco", "vea"]) assert.equal(vtexMod.TIENDAS[k].sc, null, `${k}: no se manda sc (da 400)`);
+  assert.equal(vtexMod.TIENDAS.jumbo.promos, "cencosud", "Jumbo lee sus promos del endpoint de Cencosud");
+  assert.equal(vtexMod.TIENDAS.jumbo.promoSeller, "jumboargentinaj5202martinez");
+  assert.equal(vtexMod.TIENDAS.disco.promos, "pendiente", "Disco: falta el seller de promos");
+  assert.equal(vtexMod.TIENDAS.vea.promos, "pendiente", "Vea: falta el seller de promos");
   assert.equal(vtexMod.TIENDAS.carrefour.sc, "1");
   const tj = await (await fetch(`${base}/api/tiendas`)).json();
   assert.deepEqual(tj.tiendas.map((x) => x.id), ["carrefour", "dia", "coto"], "TIENDAS_ACTIVAS limita las tiendas");
@@ -202,7 +203,10 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
       return send([p("1", "Yerba mate Jumbo 500 g.", 3000, 3000 * 82.6), p("2", "Yerba Verde 1 Kg", 5000, 5000)]);
     }
     let b = ""; req.on("data", (c) => (b += c));
-    req.on("end", () => send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "available" })) }));
+    req.on("end", () => {
+      if (req.url.startsWith("/_v/search-promotions")) return send({ promotions: {} });
+      send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "available" })) });
+    });
   });
   const pcen = await listen(cenco);
   const jumbo = await vtexMod.buscar("jumbo", "yerba", { base: `http://localhost:${pcen}` });
@@ -211,8 +215,82 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(jumbo[0].descuentoPct, 0, "ListPrice roto (82x) no es un descuento");
   assert.equal(jumbo[0].precioLista, jumbo[0].precio);
   assert.ok(jumbo.every((i) => i.promos.length === 0));
-  assert.ok(!pedidosC.some((u) => u.startsWith("POST")) || true);
   cenco.close();
+
+  // ---- Promos de Jumbo: estructura real de /_v/search-promotions ----
+  const fechaISO = (n) => new Date(Date.now() + n * 86400000).toLocaleDateString("sv") + "T00:01:00-03:00";
+  const cuerposPromo = [];
+  let promoFalla = false;
+  const mkPromo = (name, categoryType, eff, ini, fin, extra = {}) => ({ ref_id: "1", name, type: "regular", categoryType, discountType: "percentual",
+    value: 0, start: fechaISO(ini), end: fechaISO(fin), priority: 70, cumulative: false, days: {}, providers: [], excludeProviders: [], effectiveDiscount: eff, ...extra });
+  const catJ = (id, nombre, precio, cl = {}) => ({ productName: nombre, brand: "X", link: "http://j/" + id, clusterHighlights: cl,
+    items: [{ itemId: id, ean: "7790000" + id.padStart(6, "0"), images: [], sellers: [{ sellerId: "1", commertialOffer: { Price: precio, ListPrice: precio * 82.6, AvailableQuantity: 99 } }] }] });
+  const jumboPromos = http.createServer((req, res) => {
+    const send = (o, code = 200) => { res.statusCode = code; res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(o)); };
+    if (req.url.startsWith("/api/catalog_system")) {
+      if (!/_from=0/.test(req.url)) return send([]);
+      const rell = Array.from({ length: 45 }, (_, k) => catJ(String(1000 + k), `Yerba Relleno ${k} 500 g.`, 2000));
+      return send([catJ("32755", "Yerba Mate Despalada 500 Grs Piporé", 3400, { 1: "Coca Cola", 2: "Coca Cola", 3: "Gaseosas" }), catJ("311230", "Yerba Mate con Palo 1 Kg Nobleza Gaucha", 5050),
+                   catJ("411520", "Yerba Mate Orgánica con Palo 500 Grs Dicomere", 8450), ...rell]);
+    }
+    let b = ""; req.on("data", (c) => (b += c));
+    req.on("end", () => {
+      const cuerpo = JSON.parse(b);
+      if (req.url.startsWith("/_v/search-promotions")) {
+        cuerposPromo.push(cuerpo);
+        if (promoFalla) return send({ error: "boom" }, 500);
+        const pide = new Set(cuerpo.skus);
+        const solo = (o) => Object.fromEntries(Object.entries(o).filter(([sku]) => pide.has(sku)));
+        return send({ promotions: {
+          jumbo_prime: { promotions: solo({ "411520": mkPromo("PR PRIME 30% DICOMERE | Clientes", "percentual", "0.30", -2, 4) }) },
+          generic: { promotions: solo({
+            "32755": mkPromo("35% PIPORE | Ofertas Trafico", "percentual", "0.35", -1, 1),
+            "311230": mkPromo("2do al 70% NOBLEZA GAUCHA   | Ofertas Internas", "segundo_al", "0.35", -1, 1), // 0.35: valor real observado
+            "1003": mkPromo("PROMO 20% DEL NOMBRE", "percentual", "0.25", -1, 3),
+            "1004": mkPromo("SUPER OFERTA SIN PORCENTAJE", "percentual", "0.40", -1, 3),
+            "1000": mkPromo("20% VENCIDA", "percentual", "0.20", -10, -1),
+            "1001": mkPromo("25% FUTURA", "percentual", "0.25", 2, 5),
+            "1002": mkPromo("15% SOLO VIERNES", "percentual", "0.15", -1, 3, { days: { friday: true } }),
+          }) },
+        } });
+      }
+      send({ items: cuerpo.items.map((x) => ({ id: x.id, availability: "available" })) });
+    });
+  });
+  const pjp = await listen(jumboPromos);
+  const jp = await vtexMod.buscar("jumbo", "yerba", { base: `http://localhost:${pjp}`, paginas: 1 });
+  const por = (id) => jp.find((i) => i.itemId === id);
+  assert.equal(jp.length, 48);
+  assert.equal(cuerposPromo.length, 3, "48 productos = 3 lotes de hasta 20 SKUs");
+  assert.ok(cuerposPromo.every((c) => c.skus.length <= 20 && c.seller === "jumboargentinaj5202martinez" && c.skus.every((x) => typeof x === "string")));
+  const pipo = por("32755").promos;
+  assert.equal(pipo.length, 1);
+  assert.deepEqual([pipo[0].tipo, pipo[0].minUnidades, pipo[0].pctEfectivo, pipo[0].requierePago, pipo[0].condicion], ["35% off", 1, 35, false, null]);
+  assert.equal(pipo[0].hasta, new Date(Date.now() + 86400000).toLocaleDateString("sv"));
+  assert.deepEqual(por("32755").etiquetas, [], "las colecciones de Cencosud no son etiquetas de promo");
+  const nob = por("311230").promos[0];
+  assert.deepEqual([nob.tipo, nob.minUnidades, nob.pctEfectivo], ["2º al 70%", 2, 35]);
+  const prime = por("411520").promos[0];
+  assert.deepEqual([prime.pctEfectivo, prime.requierePago, prime.condicion], [30, true, "Jumbo Prime"], "las promos Prime piden membresía");
+  assert.equal(por("1003").promos[0].pctEfectivo, 25, "manda effectiveDiscount, no el número del nombre");
+  assert.deepEqual([por("1004").promos[0].tipo, por("1004").promos[0].pctEfectivo], ["40% off", 40], "sin % en el nombre igual se lee");
+  assert.equal(por("1000").promos.length, 0, "promo vencida: se descarta");
+  assert.equal(por("1001").promos.length, 0, "promo que todavía no arrancó: se descarta");
+  assert.equal(por("1002").promos[0].condicion, "días puntuales", "promo con días puntuales: queda marcada como condicionada");
+  assert.ok(jp.every((i) => i.promosLeidas === true));
+  assert.equal(require("../public/logica").costoEn(por("311230"), 2, new Date().toLocaleDateString("sv"), true).total, 2 * 5050 * 0.65, "2º al 70% llevando 2");
+  // Si el endpoint de promos falla, la búsqueda anda igual y avisa que no se leyeron
+  promoFalla = true;
+  const jf = await vtexMod.buscar("jumbo", "yerba", { base: `http://localhost:${pjp}`, paginas: 1 });
+  assert.equal(jf.length, 48);
+  assert.ok(jf.every((i) => i.promosLeidas === false && i.promos.length === 0));
+  // Disco sin seller configurado: no consulta promos
+  promoFalla = false;
+  const antes = cuerposPromo.length;
+  const dd = await vtexMod.buscar("disco", "yerba", { base: `http://localhost:${pjp}`, paginas: 1 });
+  assert.equal(cuerposPromo.length, antes, "Disco no tiene seller: no se piden promos");
+  assert.ok(dd.every((i) => i.promosLeidas === undefined));
+  jumboPromos.close();
 
   // Carrefour: si la primera búsqueda vuelve sin precios, se reintenta con sc=1 (y el carrito también lleva sc=1)
   const pedidosS = [];

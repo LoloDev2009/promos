@@ -108,7 +108,7 @@
   <div class="controls">
     <span id="tiendasBox"></span>
     <label id="lblEstricto"><input type="checkbox" id="estricto" checked> Solo lo que busqué</label>
-    <label><input type="checkbox" id="tarjeta" checked> Cuento promos con tarjeta / billetera</label>
+    <label><input type="checkbox" id="tarjeta" checked> Cuento promos con tarjeta, billetera o membresía</label>
     <label id="lblOrden">Ordenar por
       <select id="orden">
         <option value="unidad">Precio por kg/litro</option>
@@ -184,17 +184,18 @@ function diasPara(iso) {
   return Math.round((Date.parse(iso) - Date.parse(hoy())) / 86400000);
 }
 
-const promosSinLeer = (tienda) => INFO[tienda]?.promos === "pendiente";
+// Promos sin leer: la tienda todavía no las soporta, o esta consulta puntual falló
+const promosSinLeer = (i) => INFO[i.tienda]?.promos === "pendiente" || i.promosLeidas === false;
 function badgesDe(i, c) {
   const badges = [];
-  if (promosSinLeer(i.tienda)) badges.push(`<span class="badge warn" title="Todavía no leemos las promociones de esta tienda: el precio puede ser menor en la web">promos sin leer</span>`);
+  if (promosSinLeer(i)) badges.push(`<span class="badge warn" title="Todavía no leemos las promociones de esta tienda: el precio puede ser menor en la web">promos sin leer</span>`);
   if (i.descuentoPct > 0) badges.push(`<span class="badge">-${i.descuentoPct}%</span>`);
   if (c.promo) {
     let txt = esc(c.promo.tipo || "Promo");
     if (c.promo.minUnidades > 1) txt += ` · llevando ${c.promo.minUnidades}`;
     badges.push(`<span class="badge">${txt}</span>`);
     if (c.promo.tope) badges.push(`<span class="badge tag">máx ${c.promo.tope}</span>`);
-    if (c.promo.requierePago) badges.push(`<span class="badge tag">con tarjeta/billetera</span>`);
+    if (c.promo.requierePago) badges.push(`<span class="badge tag">${esc(c.promo.condicion || "con tarjeta/billetera")}</span>`);
     if (c.promo.hasta) {
       const d = diasPara(c.promo.hasta);
       const txtV = d <= 0 ? "¡vence hoy!" : d === 1 ? "vence mañana" : "hasta " + fechaCorta(c.promo.hasta);
@@ -208,7 +209,8 @@ function badgesDe(i, c) {
     if (s.esMinimo) badges.push(`<span class="badge">mínimo registrado</span>`);
     else if (s.vsPromedioPct !== null && s.vsPromedioPct <= -5) badges.push(`<span class="badge">${Math.abs(s.vsPromedioPct)}% bajo su promedio</span>`);
   }
-  for (const e of i.etiquetas || []) badges.push(`<span class="badge tag">${esc(e)}</span>`);
+  // Etiquetas de campaña: solo en las tiendas donde significan algo, sin repetidos y máximo 2
+  if (INFO[i.tienda]?.etiquetas) for (const e of [...new Set(i.etiquetas || [])].slice(0, 2)) badges.push(`<span class="badge tag">${esc(e)}</span>`);
   return badges;
 }
 
@@ -462,8 +464,8 @@ function mejorBeneficio(tienda) {
 function lineaCompra(l) {
   const promo = l.promo
     ? ` <span class="badge">${esc(l.promo.tipo || "promo")}${l.promo.minUnidades > 1 ? ` · ${l.unidadesConPromo} de ${l.cantidad} u.` : ""}</span>` +
-      (l.promo.requierePago ? ` <span class="badge tag">con tarjeta</span>` : "") : "";
-  return `<div class="linea"><span>${l.cantidad} × <a href="${esc(l.item.link)}" target="_blank" rel="noopener">${esc(l.item.nombre)}</a>${promo}${promosSinLeer(l.item.tienda) ? ` <span class="badge warn">promos sin leer</span>` : ""}</span><b>${peso(l.total)}</b></div>`;
+      (l.promo.requierePago ? ` <span class="badge tag">${esc(l.promo.condicion || "con tarjeta")}</span>` : "") : "";
+  return `<div class="linea"><span>${l.cantidad} × <a href="${esc(l.item.link)}" target="_blank" rel="noopener">${esc(l.item.nombre)}</a>${promo}${promosSinLeer(l.item) ? ` <span class="badge warn">promos sin leer</span>` : ""}</span><b>${peso(l.total)}</b></div>`;
 }
 
 function renderCompra() {
@@ -591,7 +593,7 @@ async function iniciar() {
     INFO = {};
   }
   $("tiendasBox").innerHTML = TIENDAS.map((t) => `<label><input type="checkbox" id="${esc(t)}" checked> ${esc(INFO[t]?.nombre || t)}</label>`).join("");
-  const sinLeer = TIENDAS.filter(promosSinLeer).map((t) => INFO[t].nombre || t);
+  const sinLeer = TIENDAS.filter((t) => promosSinLeer({ tienda: t })).map((t) => INFO[t].nombre || t);
   $("avisoPromos").innerHTML = sinLeer.length
     ? `De ${sinLeer.join(", ")} todavía no leemos las promociones: sus precios pueden ser menores en la web de lo que ves acá.` : "";
   [...TIENDAS, "estricto", "tarjeta", "orden"].forEach((id) => $(id).addEventListener("change", () => { renderBuscar(); renderLista(); renderCal(); renderCompra(); }));

@@ -23,7 +23,7 @@ const fetchStub = async (url, opts = {}) => {
   if (url === "/api/tiendas") {
     return { ok: true, json: async () => ({ tiendas: [
       { id: "carrefour", nombre: "Carrefour", promos: "carrito" }, { id: "coto", nombre: "Coto", promos: "catalogo" },
-      { id: "dia", nombre: "Día", promos: "precio" }, { id: "jumbo", nombre: "Jumbo", promos: "pendiente" } ] }) };
+      { id: "dia", nombre: "Día", promos: "precio", etiquetas: true }, { id: "jumbo", nombre: "Jumbo", promos: "pendiente", etiquetas: false } ] }) };
   }
   return { ok: true, json: async () => ({ lista: [] }) };
 };
@@ -37,8 +37,9 @@ datos = [
   item({ tienda: "carrefour", itemId: "10", clave: "ean:7791337010017", nombre: "Yogur Griego 300g", precio: 5400, marca: "Y", ean: "7791337010017" }),
   item({ tienda: "coto", itemId: "20", clave: "ean:7791337010017", nombre: "Yogur Griego natural Yogurísimo 300g", precio: 5170,
          promos: [{ tipo: "70% 2da", minUnidades: 2, pctEfectivo: 35, requierePago: false, hasta: null }] }),
-  item({ tienda: "dia", itemId: "30", clave: "ean:999", nombre: "Yogur solo en Día 125g", precio: 1000, cantidad: 0.125 }),
-  item({ tienda: "jumbo", itemId: "40", clave: "ean:7791337010017", nombre: "Yogur Griego Jumbo 300g", precio: 5000 }),
+  item({ tienda: "dia", itemId: "30", clave: "ean:999", nombre: "Yogur solo en Día 125g", precio: 1000, cantidad: 0.125, etiquetas: ["Ahorrames", "Ahorrames", "Lácteos", "Otra"] }),
+  item({ tienda: "jumbo", itemId: "40", clave: "ean:7791337010017", nombre: "Yogur Griego Jumbo 300g", precio: 5000, etiquetas: ["Coca Cola", "Coca Cola", "Gaseosas"],
+         promos: [{ tipo: "30% off", minUnidades: 1, pctEfectivo: 30, requierePago: true, condicion: "Jumbo Prime", hasta: null }] }),
 ];
 ultimoQ = "yogur"; pendientes = 0;
 renderBuscar();
@@ -57,7 +58,14 @@ return { tiendasHtml: document.getElementById("tiendasBox").innerHTML, aviso: do
   // Tiendas dinámicas desde el servidor + aviso de promos sin leer
   assert.ok(out.tiendasHtml.includes('id="jumbo"') && out.tiendasHtml.includes('id="carrefour"'), "los casilleros salen de /api/tiendas");
   assert.ok(out.aviso.includes("Jumbo"), "avisa que no leemos las promos de Jumbo");
+  assert.ok(out.buscarHtml.includes("Jumbo Prime"), "la condición de la promo se muestra tal cual (membresía)");
   assert.ok(out.buscarHtml.includes("promos sin leer"), "las filas de Jumbo llevan la advertencia");
+
+  // Etiquetas: solo donde significan algo, sin repetir y con tope
+  assert.equal((out.buscarHtml.match(/Ahorrames/g) || []).length, 1, "Día: la campaña aparece una sola vez");
+  assert.ok(out.buscarHtml.includes("Lácteos"), "se muestran hasta 2 etiquetas distintas");
+  assert.ok(!out.buscarHtml.includes("Otra"), "la tercera distinta no se muestra");
+  assert.ok(!out.buscarHtml.includes("Coca Cola") && !out.buscarHtml.includes("Gaseosas"), "Jumbo: las colecciones no se muestran");
 
   // Tarjetas
   assert.ok(/class="wrap grupo"/.test(out.buscarHtml), "el producto en 2 tiendas va en tarjeta agrupada");

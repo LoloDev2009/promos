@@ -8,13 +8,18 @@ const { pool } = require("../lib/concurrencia");
 // scBusqueda:  si la búsqueda vuelve sin precios, se reintenta con este sc (pasa a veces en Carrefour/Día).
 // promos:      "carrito"   = las promos se leen simulando un carrito
 //              "precio"    = el descuento ya viene en el precio (precio vs precio de lista)
-//              "pendiente" = todavía no se leen (Cencosud las arma fuera del motor estándar de VTEX)
+//              "cencosud"  = se leen del endpoint propio de Cencosud (necesita promoSeller)
+//              "pendiente" = todavía no se leen (falta el seller de la tienda)
 const TIENDAS = {
   carrefour: { nombre: "Carrefour", base: process.env.CARREFOUR_URL || "https://www.carrefour.com.ar", sc: "1", scBusqueda: "1", promos: "carrito" },
-  dia: { nombre: "Día", base: process.env.DIA_URL || "https://diaonline.supermercadosdia.com.ar", sc: "1", scBusqueda: "1", promos: "precio" },
-  jumbo: { nombre: "Jumbo", base: process.env.JUMBO_URL || "https://www.jumbo.com.ar", sc: null, scBusqueda: null, promos: "pendiente" },
-  disco: { nombre: "Disco", base: process.env.DISCO_URL || "https://www.disco.com.ar", sc: null, scBusqueda: null, promos: "pendiente" },
-  vea: { nombre: "Vea", base: process.env.VEA_URL || "https://www.vea.com.ar", sc: null, scBusqueda: null, promos: "pendiente" },
+  dia: { nombre: "Día", base: process.env.DIA_URL || "https://diaonline.supermercadosdia.com.ar", sc: "1", scBusqueda: "1", promos: "precio", etiquetas: true },
+  // Cencosud: las promos viven en /_v/search-promotions, que pide el "seller" de la tienda (no el "1" del catálogo)
+  jumbo: { nombre: "Jumbo", base: process.env.JUMBO_URL || "https://www.jumbo.com.ar", sc: null, scBusqueda: null,
+           promos: "cencosud", promoSeller: process.env.JUMBO_PROMO_SELLER || "jumboargentinaj5202martinez" },
+  disco: { nombre: "Disco", base: process.env.DISCO_URL || "https://www.disco.com.ar", sc: null, scBusqueda: null,
+           promos: process.env.DISCO_PROMO_SELLER ? "cencosud" : "pendiente", promoSeller: process.env.DISCO_PROMO_SELLER || null },
+  vea: { nombre: "Vea", base: process.env.VEA_URL || "https://www.vea.com.ar", sc: null, scBusqueda: null,
+         promos: process.env.VEA_PROMO_SELLER ? "cencosud" : "pendiente", promoSeller: process.env.VEA_PROMO_SELLER || null },
 };
 
 const conSc = (url, sc) => (sc ? `${url}${url.includes("?") ? "&" : "?"}sc=${sc}` : url);
@@ -54,7 +59,9 @@ function normalizar(tienda, p) {
     precio,
     precioLista: lista,
     descuentoPct: lista > precio ? Math.round((1 - precio / lista) * 100) : 0,
-    etiquetas: Object.values(p.clusterHighlights ?? {}).filter(Boolean),
+    // Las colecciones de Cencosud/Carrefour ("Coca Cola", "Gaseosas"...) no son promos: solo Día las usa como campañas
+    etiquetas: TIENDAS[tienda]?.etiquetas
+      ? [...new Set(Object.values(p.clusterHighlights ?? {}).filter(Boolean))].slice(0, 3) : [],
     disponible: (offer.AvailableQuantity ?? 0) > 0,
     cantidad,
     unidad,
@@ -108,6 +115,69 @@ async function simular(base, item, cfg) {
   return nombres.map((n) => parsePromo(n));
 }
 
+// ---- Promos de Cencosud (Jumbo/Disco/Vea) ----
+const GRUPOS = { generic: null, jumbo_prime: "Jumbo Prime" };
+const etiquetaGrupo = (g) => (g in GRUPOS ? GRUPOS[g] : String(g).replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase()));
+const dia = (iso) => (typeof iso === "string" && /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(0, 10) : null);
+
+// p: promo de un SKU tal como la devuelve /_v/search-promotions; grupo: "generic" | "jumbo_prime" | ...
+function promoCencosud(p, grupo, hoy) {
+  const desde = dia(p.start), hasta = dia(p.end);
+  if (hasta && hasta < hoy) return null; // vencida
+  if (desde && desde > hoy) return null; // todavía no arrancó
+  const nombre = p.name || "";
+  const base = parsePromo(nombre); // "2do al 70% ...", "35% ...", "3x2 ..."
+  let { tipo, minUnidades, pctEfectivo } = base;
+  const ll = nombre.match(/llev\w*\s*(\d+)/i); // "llevando 2 ... 25%"
+  if (ll && minUnidades === 1) minUnidades = +ll[1];
+  // effectiveDiscount es el descuento efectivo oficial sobre las unidades de la promo
+  // (en "2do al 70%" vale 0.35, el del par): manda sobre lo que se deduce del texto
+  const eff = parseFloat(p.effectiveDiscount);
+  if (eff > 0 && eff <= 0.95) {
+    pctEfectivo = Math.round(eff * 1000) / 10;
+    if (minUnidades === 1 || !tipo) tipo = `${pctEfectivo}% off`;
+  }
+  if (!(pctEfectivo > 0)) return null;
+
+  // Condiciones: grupo distinto de "generic" (ej. membresía), medios de pago puntuales, días puntuales
+  const condiciones = [];
+  const g = etiquetaGrupo(grupo);
+  if (g) condiciones.push(g);
+  if ((p.providers?.length || 0) + (p.excludeProviders?.length || 0) > 0) condiciones.push("medio de pago puntual");
+  if (p.days && Object.keys(p.days).length) condiciones.push("días puntuales");
+  return {
+    texto: nombre, tipo, minUnidades, pctEfectivo, desde, hasta, tope: null,
+    requierePago: condiciones.length > 0, condicion: condiciones.join(" · ") || null,
+  };
+}
+
+async function leerPromosCencosud(base, cfg, items) {
+  const hoy = new Date().toLocaleDateString("sv");
+  const lotes = [];
+  for (let i = 0; i < items.length; i += 20) lotes.push(items.slice(i, i + 20)); // lotes de ~20 SKUs
+  const porSku = new Map(items.map((it) => [String(it.itemId), it]));
+  await pool(lotes, 3, async (lote) => {
+    try {
+      const data = await getJson(`${base}/_v/search-promotions`, {
+        method: "POST",
+        headers: { ...HEADERS, "Content-Type": "application/json", Origin: base, Referer: base + "/" },
+        body: JSON.stringify({ seller: cfg.promoSeller, skus: lote.map((it) => String(it.itemId)) }),
+      });
+      if (!data || typeof data.promotions !== "object") throw new Error("respuesta sin promotions");
+      for (const [grupo, g] of Object.entries(data.promotions)) {
+        for (const [sku, p] of Object.entries(g?.promotions ?? {})) {
+          const it = porSku.get(String(sku));
+          const promo = it && promoCencosud(p, grupo, hoy);
+          if (promo) it.promos.push(promo);
+        }
+      }
+      lote.forEach((it) => (it.promosLeidas = true));
+    } catch {
+      lote.forEach((it) => (it.promosLeidas = false)); // la página avisa que no se pudieron leer
+    }
+  });
+}
+
 async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, concurrencia = 6, base } = {}) {
   const cfg = TIENDAS[tienda];
   if (!cfg) throw new Error(`Tienda desconocida: ${tienda}`);
@@ -157,7 +227,8 @@ async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, conc
       }
     });
   }
+  if (cfg.promos === "cencosud") await leerPromosCencosud(BASE, cfg, items);
   return items;
 }
 
-module.exports = { buscar, TIENDAS };
+module.exports = { buscar, TIENDAS, promoCencosud };

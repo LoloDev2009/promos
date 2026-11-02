@@ -61,8 +61,14 @@ Buscador de promos de Carrefour, Día y Coto.
 - `npm test` corre los tests del servidor, la lógica y la página.
 
 ## Más tiendas: Jumbo, Disco y Vea (grupo Cencosud)
-- Ya se consultan precios y stock. Son VTEX como Carrefour y Día, con tres diferencias que el código respeta:
-  no se manda `sc=1` (da error 400), el precio de lista viene roto (se ignora si es absurdo) y **sus promociones no están en el lugar estándar**: todavía no se leen.
-  Mientras tanto la página avisa "promos sin leer" en esas tiendas, porque el precio real en la web puede ser menor.
-- `cencosud-probe.js` sirve para descubrir el endpoint de promos (ver instrucciones en el archivo).
-- `TIENDAS_ACTIVAS=carrefour,dia,coto npm start` limita las tiendas que se consultan (más rápido). Las tiendas de la página se cargan solas desde el servidor.
+- Son VTEX como Carrefour y Día, con diferencias que el código respeta: no se manda `sc=1` (da error 400) y el precio de lista viene roto (se ignora si es absurdo).
+- **Jumbo**: las promos se leen de `/_v/search-promotions` (lotes de 20 productos). Las que piden ser cliente Prime u otra condición quedan marcadas y cuentan solo si tildás "Cuento promos con tarjeta, billetera o membresía".
+- **Disco y Vea**: el mismo endpoint responde con el seller de Jumbo y devuelve promos de productos de cada uno, pero las tres cadenas comparten números de campaña y no está confirmado que Disco y Vea muestren las mismas ofertas en su web. Por eso vienen apagadas ("promos sin leer").
+  Para activarlas, **después de comparar un par de productos con la web de cada tienda**: copiá `.env.example` a `.env` y descomentá `DISCO_PROMO_SELLER` y `VEA_PROMO_SELLER`.
+- `TIENDAS_ACTIVAS=carrefour,dia,coto npm start` limita las tiendas que se consultan. Las de la página se cargan solas desde el servidor.
+
+## Seguridad
+- El servidor escucha solo en tu compu (`127.0.0.1`). Para abrirlo a tu red, por ejemplo desde el celular: `HOST=0.0.0.0 npm start`. No lo hagas en una red que no sea de confianza: la lista de compras no tiene contraseña.
+
+## Configuración (.env)
+`npm start` y `npm run track` leen un archivo `.env` si existe (ver `.env.example`): código postal, sucursal de Coto, tiendas activas, promos de Disco/Vea, etc. Requiere Node 22.9 o más nuevo.

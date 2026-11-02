@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json({ limit: "512kb" }));
 
 app.get("/api/tiendas", (req, res) =>
-  res.json({ tiendas: Object.entries(TIENDAS).map(([id, c]) => ({ id, nombre: c.nombre || id, promos: c.promos || "completas" })) }));
+  res.json({ tiendas: Object.entries(TIENDAS).map(([id, c]) => ({ id, nombre: c.nombre || id, promos: c.promos || "completas", etiquetas: !!c.etiquetas })) }));
 
 // Evita repetir la misma búsqueda si llegan dos pedidos iguales a la vez (doble clic, dos pestañas)
 const enVuelo = new Map();
@@ -196,6 +196,8 @@ app.post("/api/compras/actualizar", async (req, res) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => console.log(`Promos en http://localhost:${PORT}`));
+  // Solo accesible desde esta compu. Para abrirlo a la red (celular en tu wifi): HOST=0.0.0.0 npm start
+  const HOST = process.env.HOST || "127.0.0.1";
+  app.listen(PORT, HOST, () => console.log(`Promos en http://localhost:${PORT}${HOST === "127.0.0.1" ? "" : `  (abierto en ${HOST})`}`));
 }
 module.exports = app;

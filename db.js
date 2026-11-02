@@ -58,7 +58,7 @@ const getCache = db.prepare(`SELECT capturado_en, json FROM cache WHERE tienda =
 
 // Solo se guarda lo necesario para calcular totales
 const CAMPOS = ["tienda", "itemId", "sellerId", "nombre", "marca", "ean", "link", "imagen", "precio",
-  "precioLista", "descuentoPct", "promos", "etiquetas", "cantidad", "unidad", "clave"];
+  "precioLista", "descuentoPct", "promos", "etiquetas", "cantidad", "unidad", "clave", "promosLeidas"];
 const recorte = (it) => Object.fromEntries(CAMPOS.filter((k) => it[k] !== undefined).map((k) => [k, it[k]]));
 
 const refrescarMiembro = db.prepare(

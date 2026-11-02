@@ -5,12 +5,12 @@
   "description": "Buscador de promos de Carrefour y D\u00eda",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node --env-file-if-exists=.env server.js",
     "test": "node --no-warnings test/run.js && node test/ui.js",
-    "track": "node track.js"
+    "track": "node --env-file-if-exists=.env track.js"
   },
   "engines": {
-    "node": ">=22.5"
+    "node": ">=22.9"
   },
   "dependencies": {
     "express": "^4.21.0"
