@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const { buscar, TIENDAS } = require("./scrapers");
+const { buscar, TIENDAS, TODAS } = require("./scrapers");
 const fs = require("fs");
 const { guardar, leerCache, historial, compraAgregar, compraListar, compraCantidad, compraQuitar, compraTerminos, compraMarcarSinStock } = require("./db");
 const { calcular, hoyLocal } = require("./lib/precios");
@@ -142,6 +142,16 @@ app.get("/api/calendario", (req, res) => {
     d.vencen = Object.entries(venc[d.fecha] || {}).map(([tienda, v]) => ({ tienda, ...v }));
   }
   res.json({ hoy, misMedios: datos.misMedios, ...cal });
+});
+
+// ---------- Editor de beneficios ----------
+app.get("/api/beneficios", (req, res) => res.json(beneficios.cargar(BENEFICIOS)));
+
+app.put("/api/beneficios", (req, res) => {
+  const { valor, errores } = beneficios.validarArchivo(req.body, TODAS);
+  if (errores.length) return res.status(400).json({ error: "Hay beneficios con errores: no se guardó nada.", detalle: errores.slice(0, 20) });
+  beneficios.guardarArchivo(BENEFICIOS, valor);
+  res.json(valor);
 });
 
 // ---------- Mi compra (lista de compras con cantidades) ----------

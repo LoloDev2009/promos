@@ -94,11 +94,11 @@ function normalizar(r) {
   };
 }
 
-async function pedirPagina(q, page, porPagina) {
+async function pedirPagina(q, page, porPagina, base) {
   const params = new URLSearchParams({
     key: KEY, i: CLIENT_ID, s: "1", num_results_per_page: String(porPagina), page: String(page),
   });
-  const res = await fetch(`${BASE}/search/${encodeURIComponent(q)}?${params}`, {
+  const res = await fetch(`${base}/search/${encodeURIComponent(q)}?${params}`, {
     headers: HEADERS, signal: AbortSignal.timeout(12000),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -106,15 +106,26 @@ async function pedirPagina(q, page, porPagina) {
   return (j.response ?? j).results ?? [];
 }
 
-async function buscar(termino, { paginas = 2, porPagina = 48 } = {}) {
+async function buscar(termino, { paginas = 2, porPagina = 48, base = BASE } = {}) {
   const q = termino.replace(/['"]/g, " ").trim();
   // Las páginas se piden a la vez. Si falla la primera es un error; las otras son opcionales.
   const pedidas = await Promise.allSettled(
-    Array.from({ length: paginas }, (_, k) => pedirPagina(q, k + 1, porPagina))
+    Array.from({ length: paginas }, (_, k) => pedirPagina(q, k + 1, porPagina, base))
   );
-  if (pedidas[0].status === "rejected") throw pedidas[0].reason;
+  if (pedidas[0].status === "rejected") {
+    const msg = pedidas[0].reason?.message || "error";
+    throw new Error(/HTTP 40[13]/.test(msg) ? `${msg}: puede que Coto haya cambiado su clave de búsqueda (COTO_KEY en .env)` : msg);
+  }
   const results = pedidas.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
-  const items = results.map(normalizar).filter(Boolean).filter((i) => i.disponible);
+  const conPrecio = results.map(normalizar).filter(Boolean);
+  const items = conPrecio.filter((i) => i.disponible);
+  // Si Coto sí devolvió productos pero la sucursal los descartó a todos, no es "sin resultados": es configuración
+  if (results.length > 0 && conPrecio.length === 0) {
+    throw new Error(`Coto devolvió ${results.length} productos pero ninguno tiene precio en la sucursal ${STORE}: probá con otra (COTO_STORE en .env)`);
+  }
+  if (conPrecio.length > 0 && items.length === 0) {
+    throw new Error(`${conPrecio.length} productos con precio pero ninguno figura con stock en la sucursal ${STORE}`);
+  }
   return [...new Map(items.map((i) => [i.itemId, i])).values()]; // sin duplicados entre páginas
 }
 
@@ -122,8 +133,9 @@ module.exports = { buscar, normalizar, parsePrecio, STORE };
 
 // Uso directo: node scrapers/coto.js yogurt
 if (require.main === module) {
+  console.log(`Sucursal ${STORE} · clave ${KEY.slice(0, 8)}… · ${BASE}`);
   buscar(process.argv[2] || "yogurt").then((items) => {
-    console.log(`Sucursal ${STORE}: ${items.length} productos\n`);
+    console.log(`${items.length} productos disponibles\n`);
     for (const i of items.slice(0, 15)) {
       const p = i.promos.map((x) => `${x.tipo}${x.minUnidades > 1 ? " llevando " + x.minUnidades : ""} (-${x.pctEfectivo}%)${x.requierePago ? " [TARJETA]" : ""}`).join("; ");
       console.log(`$${i.precio} ${i.nombre}${i.cantidad ? ` [${i.cantidad}${i.unidad}]` : ""}${p ? " | " + p : ""}`);

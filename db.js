@@ -42,6 +42,15 @@ CREATE TABLE IF NOT EXISTS cache (
 );
 `);
 
+// Si cambió algo de la configuración que afecta los resultados (sucursal de Coto, código postal, sellers...),
+// lo guardado en caché ya no vale: se descarta para no seguir mostrando datos de la configuración anterior.
+db.exec(`CREATE TABLE IF NOT EXISTS meta (clave TEXT PRIMARY KEY, valor TEXT NOT NULL)`);
+const firmaConfig = JSON.stringify(
+  ["COTO_STORE", "COTO_KEY", "CP", "JUMBO_PROMO_SELLER", "DISCO_PROMO_SELLER", "VEA_PROMO_SELLER"].map((k) => [k, process.env[k] || ""]));
+const firmaPrevia = db.prepare(`SELECT valor FROM meta WHERE clave = 'firma'`).get();
+if (!firmaPrevia || firmaPrevia.valor !== firmaConfig) db.exec(`DELETE FROM cache`);
+db.prepare(`INSERT INTO meta (clave, valor) VALUES ('firma', ?) ON CONFLICT (clave) DO UPDATE SET valor = excluded.valor`).run(firmaConfig);
+
 const upsertProd = db.prepare(`
   INSERT INTO productos (tienda, item_id, ean, nombre, marca, link, imagen)
   VALUES (@tienda, @itemId, @ean, @nombre, @marca, @link, @imagen)
@@ -169,6 +178,16 @@ function compraTerminos() {
   return [...new Set(db.prepare(`SELECT terminos_json FROM compra_items`).all().flatMap((r) => JSON.parse(r.terminos_json)))];
 }
 
+// tienda -> Set de itemId de los productos de Mi compra (para mantener sus promos al día)
+function compraItemIds() {
+  const m = new Map();
+  for (const r of db.prepare(`SELECT tienda, item_id FROM compra_miembros`).all()) {
+    if (!m.has(r.tienda)) m.set(r.tienda, new Set());
+    m.get(r.tienda).add(String(r.item_id));
+  }
+  return m;
+}
+
 // Tras refrescar: lo que no volvió a aparecer en las tiendas consultadas queda marcado sin stock
 function compraMarcarSinStock(visto, tiendasOk) {
   const ahora = new Date().toISOString();
@@ -182,4 +201,4 @@ function compraMarcarSinStock(visto, tiendasOk) {
   }
 }
 
-module.exports = { db, guardar, leerCache, historial, compraAgregar, compraListar, compraCantidad, compraQuitar, compraTerminos, compraMarcarSinStock };
+module.exports = { db, guardar, leerCache, historial, compraAgregar, compraListar, compraCantidad, compraQuitar, compraTerminos, compraMarcarSinStock, compraItemIds };

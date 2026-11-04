@@ -178,7 +178,7 @@ async function leerPromosCencosud(base, cfg, items) {
   });
 }
 
-async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, concurrencia = 6, base } = {}) {
+async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, concurrencia = 6, base, soloRelevantes = false, incluir = null } = {}) {
   const cfg = TIENDAS[tienda];
   if (!cfg) throw new Error(`Tienda desconocida: ${tienda}`);
   const BASE = base || cfg.base;
@@ -219,7 +219,9 @@ async function buscar(tienda, termino, { paginas = 2, maxSimulaciones = 40, conc
       .map((it, k) => ({ it, k, p: prioridad(it) }))
       .sort((a, b) => a.p - b.p || a.k - b.k)
       .map((x) => x.it);
-    await pool(items.slice(0, maxSimulaciones), concurrencia, async (it) => {
+    // soloRelevantes (seguimiento diario): se omiten los que la página ocultaría, salvo los de Mi compra (incluir)
+    const aSimular = soloRelevantes ? items.filter((it) => prioridad(it) === 0 || incluir?.has(String(it.itemId))) : items;
+    await pool(aSimular.slice(0, maxSimulaciones), concurrencia, async (it) => {
       try {
         it.promos = await simular(BASE, it, cfg);
       } catch {

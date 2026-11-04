@@ -387,7 +387,7 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.deepEqual(await pool([3, 1, 2], 2, async (n) => n * 10), [30, 10, 20], "conserva el orden de resultados");
 
   // Tienda VTEX falsa lenta: 3 productos irrelevantes primero, después 12 relevantes con promo
-  let simActivas = 0, simMax = 0;
+  let simActivas = 0, simMax = 0, simCount = 0;
   const relevantes = Array.from({ length: 12 }, (_, k) => prod(String(21 + k), `Yerba mate Marca${k} 500 g.`, 2000 + k, 2000 + k));
   const irrelevantes = Array.from({ length: 3 }, (_, k) => prod(String(11 + k), `Chocolate con yerba 20 g. N${k}`, 500, 500));
   const lenta = http.createServer((req, res) => {
@@ -397,7 +397,7 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
     req.on("end", async () => {
       const pedidos = JSON.parse(b).items;
       const esPromo = pedidos.length === 1 && pedidos[0].quantity === 4;
-      if (esPromo) { simActivas++; simMax = Math.max(simMax, simActivas); await new Promise((r) => setTimeout(r, 80)); simActivas--; }
+      if (esPromo) { simCount++; simActivas++; simMax = Math.max(simMax, simActivas); await new Promise((r) => setTimeout(r, 80)); simActivas--; }
       send({ items: pedidos.map((x) => ({ id: x.id, availability: "available" })),
              ratesAndBenefitsData: { teaser: esPromo ? [{ name: "2do al 50%" }] : [] } });
     });
@@ -413,6 +413,14 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   const conPromo = rapido.filter((i) => i.promos.length);
   assert.equal(conPromo.length, 12);
   assert.ok(conPromo.every((i) => i.nombre.startsWith("Yerba")), "se simularon primero los productos relevantes");
+  // Seguimiento: solo se simulan los relevantes (+ los de Mi compra), no los que la página oculta
+  simCount = 0;
+  await buscarVtex("carrefour", "yerba", { base: `http://localhost:${pl}`, soloRelevantes: true });
+  assert.equal(simCount, 12, "el seguimiento simula solo los 12 relevantes, no los 3 que se ocultan");
+  simCount = 0;
+  const conIncl = await buscarVtex("carrefour", "yerba", { base: `http://localhost:${pl}`, soloRelevantes: true, incluir: new Set(["11"]) });
+  assert.equal(simCount, 13);
+  assert.equal(conIncl.find((i) => i.itemId === "11").promos.length, 1, "los productos de Mi compra se siguen simulando aunque no sean relevantes");
   lenta.close();
 
   // Dos búsquedas iguales a la vez hacen una sola consulta a la tienda
@@ -425,6 +433,44 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(r1.tiendas.dia.ok && r2.tiendas.dia.ok, true);
   assert.equal(consultasDia, 1, "no se repite la misma búsqueda en vuelo");
   assert.ok(typeof r1.tiendas.dia.ms === "number", "informa cuánto tardó cada tienda");
+
+  // ---- Seguimiento rápido ----
+  const { rastrear: rastrearRapido } = require("../lib/track");
+  const enCurso = {}, maxPorTienda = {}, llamadasT = {}, guardadas = [], optsVistas = [];
+  let totalActivos = 0, maxTotal = 0;
+  const falsa = async (tienda, q, opts) => {
+    llamadasT[tienda] = (llamadasT[tienda] || 0) + 1;
+    if (tienda === "caida") throw new Error("HTTP 503");
+    if (tienda === "flaca" && q === "t1" && llamadasT.flaca === 1) throw new Error("fallo pasajero");
+    enCurso[tienda] = (enCurso[tienda] || 0) + 1;
+    maxPorTienda[tienda] = Math.max(maxPorTienda[tienda] || 0, enCurso[tienda]);
+    totalActivos++; maxTotal = Math.max(maxTotal, totalActivos);
+    await new Promise((r) => setTimeout(r, 60));
+    enCurso[tienda]--; totalActivos--;
+    optsVistas.push([tienda, opts]);
+    return [{ tienda, itemId: q, nombre: q, precio: 1, promos: [] }];
+  };
+  const tIni = Date.now();
+  const rr = await rastrearRapido({
+    terminos: ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"], tiendas: ["a", "b", "c", "flaca", "caida"], pausaMs: 0, concurrencia: 2,
+    log: () => {}, buscarFn: falsa, guardarFn: (tienda, q, items) => guardadas.push([tienda, q, items.length]), incluir: new Map([["a", new Set(["9"])]]),
+  });
+  const dur = Date.now() - tIni;
+  assert.equal(maxPorTienda.a, 2, "hasta 2 búsquedas a la vez por tienda");
+  assert.ok(maxTotal >= 6, `las tiendas van en paralelo (máx. simultáneas: ${maxTotal})`);
+  assert.ok(dur < 900, `4 tiendas × 8 búsquedas de 60 ms en fila serían ~1900 ms; tardó ${dur} ms`);
+  assert.equal(rr.filter((r) => r.ok).length, 32, "las 4 tiendas sanas terminan todo (la 'flaca' se recupera con el reintento)");
+  assert.equal(llamadasT.flaca, 9, "un fallo pasajero se reintenta una vez");
+  assert.equal(guardadas.length, 32);
+  assert.ok(llamadasT.caida <= 7, `una tienda caída se abandona tras unos pocos fallos y sin reintentar de más (${llamadasT.caida} llamadas; sin esa regla serían 16)`);
+  assert.ok(rr.filter((r) => r.tienda === "caida" && /omitida/.test(r.error)).length >= 3, "el resto de sus búsquedas se omite sin esperar");
+  assert.ok(optsVistas.every(([, o]) => o.soloRelevantes === true), "el seguimiento pide solo promos de lo relevante");
+  assert.ok(optsVistas.find(([tienda]) => tienda === "a")[1].incluir.has("9"), "pasa los productos de Mi compra de cada tienda");
+  assert.equal(typeof rr.duracionMs, "number");
+  let repetidas = 0;
+  await rastrearRapido({ terminos: ["Yerba", "yerba ", " ", "YERBA"], tiendas: ["a"], pausaMs: 0, log: () => {}, incluir: new Map(),
+    buscarFn: async () => { repetidas++; return []; }, guardarFn: () => {} });
+  assert.equal(repetidas, 1, "los términos repetidos se buscan una sola vez");
 
   // ---- Relevancia ----
   const { analizar, filtrarRelevantes } = require("../lib/relevancia");
@@ -447,6 +493,26 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(filtrarRelevantes(mezcla).length, 3, "deja las leches, saca flan y chocolate");
   const pocos = [{ nombre: "Leche A", rel: rel("leche", "Leche A") }, { nombre: "Flan de leche", rel: rel("leche", "Flan de leche") }];
   assert.equal(filtrarRelevantes(pocos).length, 2, "si hay muy pocos exactos no se esconde todo");
+
+  // ---- beneficios.json real: datos bien formados y calendario coherente ----
+  const reales = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "beneficios.json"), "utf8"));
+  const DIAS_OK = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"];
+  for (const b of reales.beneficios) {
+    const id = `${b.tienda}/${b.medio}/${JSON.stringify(b.dias)}`;
+    assert.ok(["carrefour", "dia", "coto", "jumbo", "disco", "vea"].includes(b.tienda), `tienda válida: ${id}`);
+    assert.ok(typeof b.medio === "string" && b.medio, `medio: ${id}`);
+    assert.ok(b.pct > 0 && b.pct <= 100, `pct: ${id}`);
+    assert.ok(b.dias === "todos" || b.dias === null || (Array.isArray(b.dias) && b.dias.length && b.dias.every((d) => DIAS_OK.includes(d))), `dias: ${id}`);
+    for (const k of ["desde", "hasta"]) assert.ok(b[k] == null || /^\d{4}-\d{2}-\d{2}$/.test(b[k]), `${k}: ${id}`);
+    assert.ok(b.tope == null || b.tope > 0, `tope: ${id}`);
+    assert.ok(b.tope != null || b.topeAConfirmar === true || b.topeAConfirmar === false, `hay que decir si el tope es desconocido: ${id}`);
+    assert.ok(b.fuente, `fuente: ${id}`);
+  }
+  const calReal = require("../lib/beneficios").calendario({ misMedios: [], beneficios: reales.beneficios }, "2026-11-02", 7);
+  assert.equal(calReal.hayDatosVigentes, true);
+  assert.equal(calReal.recomendado.tienda, "coto");
+  assert.equal(calReal.recomendado.fecha, "2026-11-06", "el viernes 25% en Coto es lo mejor de la semana");
+  assert.equal(calReal.dias[0].mejor.dia.pct, 20, "el lunes lo mejor en Día es Cuenta DNI con Visa crédito (20%)");
 
   // ---- Calendario de beneficios ----
   const B = require("../lib/beneficios");
@@ -567,6 +633,63 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(Math.round(sumSub), Math.round(plApi.recomendado.total));
   const quitado = await (await fetch(`${base}/api/compras/${act.lista.find((x) => x.clave === "ean:fantasma").id}`, { method: "DELETE" })).json();
   assert.equal(quitado.lista.length, 1);
+
+  // ---- Editor de beneficios ----
+  const BM = require("../lib/beneficios");
+  const { combinarBeneficios, parseImportacion } = require("../public/logica");
+  const TODAS_T = ["carrefour", "dia", "coto", "jumbo", "disco", "vea"];
+  const ok1 = BM.normalizarBeneficio({ tienda: "Día", medio: " Mercado Pago ", dias: ["Miércoles", "sábado", "miércoles"], pct: "15,5", tope: "", hasta: "2026-11-30" }, TODAS_T);
+  assert.deepEqual(ok1.errores, []);
+  assert.deepEqual([ok1.valor.tienda, ok1.valor.medio, ok1.valor.dias, ok1.valor.pct], ["dia", "Mercado Pago", ["miercoles", "sabado"], 15.5], "acentos, comas y repetidos");
+  assert.deepEqual([ok1.valor.tope, ok1.valor.topePeriodo, ok1.valor.topeAConfirmar, ok1.valor.verificar, ok1.valor.fuente], [null, null, false, true, "carga manual"]);
+  const conTope = BM.normalizarBeneficio({ tienda: "coto", medio: "X", dias: "todos", pct: 10, tope: "7500", topePeriodo: "por mes", compraMinima: "35000" }, TODAS_T).valor;
+  assert.deepEqual([conTope.tope, conTope.topePeriodo, conTope.compraMinima, conTope.dias], [7500, "por mes", 35000, "todos"]);
+  assert.equal(BM.normalizarBeneficio({ tienda: "coto", medio: "X", dias: ["todos", "lunes"], pct: 5 }, TODAS_T).valor.dias, "todos");
+  assert.equal(BM.normalizarBeneficio({ tienda: "coto", medio: "X", dias: "", pct: 5 }, TODAS_T).valor.dias, null, "sin día: queda 'a confirmar'");
+  for (const [malo, texto] of [
+    [{ tienda: "coto", medio: "X", pct: 0 }, "porcentaje"], [{ tienda: "walmart", medio: "X", pct: 5 }, "tienda desconocida"],
+    [{ tienda: "coto", medio: "X", pct: 5, hasta: "2026-13-45" }, "fecha inválida"], [{ tienda: "coto", medio: "X", pct: 5, dias: ["funday"] }, "día no válido"],
+    [{ tienda: "coto", medio: "X", pct: 5, desde: "2026-12-01", hasta: "2026-11-01" }, "posterior"], [{ tienda: "coto", medio: "  ", pct: 5 }, "medio"],
+    [{ tienda: "coto", medio: "X", pct: 5, tope: -5 }, "tope"],
+  ]) {
+    const r = BM.normalizarBeneficio(malo, TODAS_T);
+    assert.ok(r.errores.some((e) => e.includes(texto)), `debe rechazar (${texto}): ${JSON.stringify(r.errores)}`);
+  }
+  const va = BM.validarArchivo({ beneficios: [{ tienda: "coto", medio: "X", pct: 5 }, { tienda: "coto", medio: "Y", pct: 500 }] }, TODAS_T);
+  assert.ok(va.errores[0].startsWith("#2 coto/Y"), "el error dice qué fila falló");
+
+  // API: guardar en disco, filtrar por medios, rechazar sin pisar nada
+  const get0 = await (await fetch(`${base}/api/beneficios`)).json();
+  assert.equal(get0.beneficios.length, 5);
+  const put = (body) => fetch(`${base}/api/beneficios`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const rp = await put({ misMedios: ["mercado pago"], beneficios: [...get0.beneficios, { tienda: "vea", medio: "Cuenta DNI", dias: ["miércoles"], pct: "10", tope: "6000", topePeriodo: "por semana" }] });
+  assert.equal(rp.status, 200);
+  const guardado = await rp.json();
+  assert.equal(guardado.beneficios.length, 6);
+  assert.deepEqual(guardado.beneficios[5].dias, ["miercoles"]);
+  const enDisco = JSON.parse(fs.readFileSync(process.env.BENEFICIOS_FILE, "utf8"));
+  assert.ok(enDisco._leeme && enDisco.beneficios.length === 6, "queda guardado en el archivo, con su explicación");
+  assert.ok(!fs.readdirSync(path.dirname(process.env.BENEFICIOS_FILE)).some((f) => f.includes(".tmp-")), "no quedan temporales");
+  const calMP = await (await fetch(`${base}/api/calendario?dias=7`)).json();
+  assert.deepEqual(calMP.misMedios, ["mercado pago"]);
+  const todosMP = calMP.dias.flatMap((d) => d.beneficios);
+  assert.ok(todosMP.length > 0 && todosMP.every((b) => b.medio === "Mercado Pago"), "el calendario muestra solo mis medios");
+  const rmal = await put({ misMedios: [], beneficios: [{ tienda: "walmart", medio: "X", pct: 5 }, { tienda: "coto", medio: "Y", pct: 0 }] });
+  assert.equal(rmal.status, 400);
+  assert.ok((await rmal.json()).detalle.length === 2, "informa todos los errores");
+  assert.equal((await (await fetch(`${base}/api/beneficios`)).json()).beneficios.length, 6, "un guardado inválido no pisa nada");
+  assert.equal((await put({ beneficios: "nada" })).status, 400);
+  await put({ misMedios: [], beneficios: get0.beneficios }); // restaura
+
+  // Importar desde el chat
+  assert.equal(parseImportacion('```json\n[{"tienda":"coto"}]\n```').beneficios.length, 1, "tolera las comillas de bloque de código");
+  assert.equal(parseImportacion('{"beneficios":[{"tienda":"coto"}],"misMedios":["X"]}').misMedios[0], "X");
+  assert.throws(() => parseImportacion("hola"), /JSON/);
+  assert.throws(() => parseImportacion('{"foo":1}'), /beneficios/);
+  const comb = combinarBeneficios(
+    [{ tienda: "coto", medio: "Mercado Pago", dias: ["viernes"], pct: 25, hasta: "2026-11-30" }],
+    [{ tienda: "COTO", medio: "mercado pago", dias: ["Viernes"], pct: "25", hasta: "2026-11-30" }, { tienda: "coto", medio: "Mercado Pago", dias: ["sábado"], pct: 20, hasta: "2026-11-30" }]);
+  assert.deepEqual([comb.lista.length, comb.agregados, comb.repetidos], [2, 1, 1], "no duplica lo que ya estaba (aunque cambien mayúsculas o acentos)");
 
   // una tienda caída no rompe a la otra
   carre.close();

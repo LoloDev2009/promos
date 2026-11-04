@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
     "test": "node --no-warnings test/run.js && node test/ui.js",
-    "track": "node --env-file-if-exists=.env track.js"
+    "track": "node --env-file-if-exists=.env track.js",
+    "coto": "node --env-file-if-exists=.env scrapers/coto.js"
   },
   "engines": {
     "node": ">=22.9"

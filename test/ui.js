@@ -48,7 +48,23 @@ const gid = +buscarHtml.match(/class="wrap grupo">[\\s\\S]*?data-gid="(\\d+)"/)[
 document.__click({ target: { closest: (s) => (s === ".btn-add" ? { dataset: { gid: String(gid) } } : null) } });
 await new Promise((r) => setTimeout(r, 20));
 renderCompra();
-return { tiendasHtml: document.getElementById("tiendasBox").innerHTML, aviso: document.getElementById("avisoPromos").innerHTML, buscarHtml, planHtml: document.getElementById("compraPlan").innerHTML, listaHtml: document.getElementById("compraLista").innerHTML,
+// Calendario: tope a confirmar y compra mínima; sugerencia en Mi compra según subtotal
+cal = { hoy: "2026-11-02", misMedios: [], hayDatosVigentes: true, vencenPronto: [], sinDia: [], recomendado: null, dias: [
+  { fecha: "2026-11-06", diaSemana: "viernes", vencen: [], mejor: {}, beneficios: [
+    { tienda: "coto", medio: "Mercado Pago", pct: 25, tope: null, topeAConfirmar: true, adicional: false, verificar: true, dias: ["viernes"] },
+    { tienda: "coto", medio: "Banco Grande", pct: 30, tope: null, compraMinima: 100000, adicional: false, dias: ["viernes"] },
+  ] } ] };
+renderCal();
+const calHtml = document.getElementById("cal").innerHTML;
+renderCompra();
+const sugHtml = document.getElementById("compraPlan").innerHTML;
+ben = { misMedios: ["mercado pago"], beneficios: [
+  { tienda: "coto", medio: "Mercado Pago", dias: ["viernes"], pct: 25, tope: null, topeAConfirmar: true, hasta: "2026-11-30" },
+  { tienda: "dia", medio: "Cuenta DNI", dias: "todos", pct: 5, tope: 5000, hasta: null },
+  { tienda: "coto", medio: "Comunidad Coto", dias: null, pct: 15, tope: null, topeAConfirmar: false, hasta: null } ] };
+renderEditor();
+const editorHtml = document.getElementById("editorCuerpo").innerHTML;
+return { editorHtml, calHtml, sugHtml, tiendasHtml: document.getElementById("tiendasBox").innerHTML, aviso: document.getElementById("avisoPromos").innerHTML, buscarHtml, planHtml: document.getElementById("compraPlan").innerHTML, listaHtml: document.getElementById("compraLista").innerHTML,
          cuenta: document.getElementById("cuenta").textContent };
 `;
 
@@ -66,6 +82,20 @@ return { tiendasHtml: document.getElementById("tiendasBox").innerHTML, aviso: do
   assert.ok(out.buscarHtml.includes("Lácteos"), "se muestran hasta 2 etiquetas distintas");
   assert.ok(!out.buscarHtml.includes("Otra"), "la tercera distinta no se muestra");
   assert.ok(!out.buscarHtml.includes("Coca Cola") && !out.buscarHtml.includes("Gaseosas"), "Jumbo: las colecciones no se muestran");
+
+  // Beneficios: tope desconocido no se muestra como "sin tope"; la compra mínima se respeta
+  assert.ok(out.calHtml.includes("tope a confirmar"), "tope desconocido: se dice, no se muestra como sin tope");
+  assert.ok(out.calHtml.includes("compra mín."), "se muestra la compra mínima");
+  assert.ok(out.sugHtml.includes("Mercado Pago") && out.sugHtml.includes("$1.680"), "sugiere el beneficio aplicable: 25% de $6.721");
+  assert.ok(!out.sugHtml.includes("Banco Grande"), "no sugiere un beneficio cuya compra mínima no se alcanza");
+
+  // Editor de beneficios
+  assert.ok(out.editorHtml.includes('data-medio="Mercado Pago" checked'), "Mercado Pago figura como medio que uso");
+  assert.ok(!out.editorHtml.includes('data-medio="Cuenta DNI" checked'), "los demás medios no están marcados");
+  assert.ok([0, 1, 2].every((i) => out.editorHtml.includes(`data-del="${i}"`)), "cada beneficio se puede borrar");
+  assert.ok(out.editorHtml.includes("a confirmar"), "tope desconocido y día sin definir se ven como 'a confirmar'");
+  assert.ok(out.editorHtml.includes(">V<") || /<td>V<\/td>/.test(out.editorHtml), "los días se abrevian");
+  assert.ok(out.editorHtml.includes('value="jumbo"'), "el formulario ofrece todas las tiendas del servidor");
 
   // Tarjetas
   assert.ok(/class="wrap grupo"/.test(out.buscarHtml), "el producto en 2 tiendas va en tarjeta agrupada");

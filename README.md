@@ -72,3 +72,15 @@ Buscador de promos de Carrefour, Día y Coto.
 
 ## Configuración (.env)
 `npm start` y `npm run track` leen un archivo `.env` si existe (ver `.env.example`): código postal, sucursal de Coto, tiendas activas, promos de Disco/Vea, etc. Requiere Node 22.9 o más nuevo.
+
+## Editor de beneficios
+- Pestaña **Cuándo comprar → Editar beneficios**: marcás los medios de pago que usás, agregás o borrás beneficios con un formulario y los cambios se guardan en `beneficios.json` (la escritura es atómica: nunca queda el archivo a medias).
+- Si los descuentos de las webs oficiales son imágenes (banners), mandale la captura al chat de Claude, pedile los beneficios en formato JSON y pegalos en "Importar desde el chat". "Agregar a los que ya tengo" no duplica los repetidos; los que se importan quedan marcados "verificar".
+- Si un guardado tiene errores (porcentaje fuera de rango, tienda o día inválido, fechas), no se guarda nada y se informan todos los errores.
+
+## Seguimiento diario: velocidad
+- `node track.js` corre las tiendas **en paralelo** (como las búsquedas de la página) y, dentro de cada tienda, hasta 2 búsquedas a la vez. Antes iba todo en fila con 1,5 s de pausa después de cada búsqueda.
+- Solo consulta promos de los productos relevantes para cada término (los que muestra "Solo lo que busqué") y de los que están en Mi compra, no de todo lo que devuelve la tienda.
+- Reintenta una vez un error pasajero. Si una tienda falla 3 veces seguidas, omite el resto de sus búsquedas en vez de esperar a que fallen una por una.
+- Al final muestra cuánto tardó y cuántas búsquedas salieron bien por tienda.
+- Ajustes en `.env`: `TRACK_CONCURRENCIA` (por defecto 2; poné 1 si alguna tienda empieza a dar errores, 3 si querés ir más rápido) y `TRACK_PAUSA_MS` (por defecto 300).

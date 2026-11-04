@@ -13,4 +13,4 @@ function buscar(tienda, termino, opts) {
   return vtex.buscar(tienda, termino, opts);
 }
 
-module.exports = { buscar, TIENDAS };
+module.exports = { buscar, TIENDAS, TODAS: Object.keys(todas) };

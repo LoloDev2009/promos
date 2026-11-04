@@ -1,54 +1,48 @@
 {
-  "_leeme": "Beneficios por día / banco / billetera. Editá este archivo cada mes. dias: lista de días (lunes..domingo), \"todos\", o null si el día no está claro (aparece aparte). adicional=true: se suma a otro beneficio, no compite en el ranking. verificar=true: confirmalo en la web del banco/tienda antes de contar con él.",
+  "_leeme": "Beneficios por día / banco / billetera (noviembre 2026). Editá este archivo cada mes. dias: lista de días (lunes..domingo), \"todos\", o null si el día no está claro. tope: monto máximo de reintegro (null = sin tope); topeAConfirmar=true si la fuente no lo informa. compraMinima: monto mínimo de compra si lo pide. adicional=true: se suma a otro beneficio, no compite en el ranking. verificar=true: confirmalo en la web del banco/tienda antes de contar con él. medio: usá el mismo nombre que pongas en misMedios.",
   "misMedios": [],
   "beneficios": [
-    {
-      "tienda": "dia", "medio": "Cuenta DNI", "dias": ["lunes"], "pct": 20, "tope": null, "topePeriodo": null,
-      "detalle": "Pagando con NFC. Sin tope de reintegro.",
-      "desde": null, "hasta": "2026-10-31", "adicional": false, "verificar": true,
-      "fuente": "viapais.com.ar, Cuenta DNI octubre 2026"
-    },
-    {
-      "tienda": "carrefour", "medio": "Cuenta DNI", "dias": null, "pct": 10, "tope": null, "topePeriodo": null,
-      "detalle": "Con consumo mínimo de $15.000, sin tope. Día a confirmar.",
-      "desde": null, "hasta": "2026-10-31", "adicional": false, "verificar": true,
-      "fuente": "viapais.com.ar, Cuenta DNI octubre 2026"
-    },
-    {
-      "tienda": "coto", "medio": "Cuenta DNI", "dias": null, "pct": 30, "tope": null, "topePeriodo": null,
-      "detalle": "Pagando con NFC, sin tope. La nota agrupa 'viernes y sábados': confirmar el día exacto.",
-      "desde": null, "hasta": "2026-10-31", "adicional": false, "verificar": true,
-      "fuente": "viapais.com.ar, Cuenta DNI octubre 2026"
-    },
-    {
-      "tienda": "dia", "medio": "Cuenta DNI", "dias": "todos", "pct": 5, "tope": 5000, "topePeriodo": "por semana",
-      "detalle": "5% adicional de Banco Provincia.",
-      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
-      "fuente": "elonce.com, descuentos octubre"
-    },
-    {
-      "tienda": "carrefour", "medio": "Cuenta DNI", "dias": "todos", "pct": 5, "tope": 5000, "topePeriodo": "por semana",
-      "detalle": "5% adicional de Banco Provincia.",
-      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
-      "fuente": "elonce.com, descuentos octubre"
-    },
-    {
-      "tienda": "dia", "medio": "BNA+ MODO", "dias": "todos", "pct": 5, "tope": 20000, "topePeriodo": "por mes",
-      "detalle": "5% adicional de Banco Nación pagando con BNA+ MODO. Vigencia a confirmar.",
-      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
-      "fuente": "elonce.com, descuentos octubre"
-    },
-    {
-      "tienda": "carrefour", "medio": "BNA+ MODO", "dias": "todos", "pct": 5, "tope": 20000, "topePeriodo": "por mes",
-      "detalle": "5% adicional de Banco Nación pagando con BNA+ MODO. Vigencia a confirmar.",
-      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
-      "fuente": "elonce.com, descuentos octubre"
-    },
-    {
-      "tienda": "coto", "medio": "BNA+ MODO", "dias": "todos", "pct": 5, "tope": 20000, "topePeriodo": "por mes",
-      "detalle": "5% adicional de Banco Nación pagando con BNA+ MODO. Vigencia a confirmar.",
-      "desde": null, "hasta": "2026-10-31", "adicional": true, "verificar": true,
-      "fuente": "elonce.com, descuentos octubre"
-    }
+    { "tienda": "coto", "medio": "Mercado Pago", "dias": ["viernes"], "pct": 25, "tope": null, "topeAConfirmar": true,
+      "detalle": "Pagando con Mercado Pago.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+    { "tienda": "coto", "medio": "Mercado Pago", "dias": ["sabado"], "pct": 20, "tope": null, "topeAConfirmar": true,
+      "detalle": "Pagando con Mercado Pago.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+    { "tienda": "coto", "medio": "Mercado Pago", "dias": ["domingo"], "pct": 20, "tope": null, "topeAConfirmar": true,
+      "detalle": "Pagando con Mercado Pago.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+    { "tienda": "carrefour", "medio": "Mercado Pago", "dias": ["lunes"], "pct": 15, "tope": null, "topeAConfirmar": true,
+      "detalle": "Pagando con código QR de Mercado Pago.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+    { "tienda": "carrefour", "medio": "Mercado Pago", "dias": ["jueves"], "pct": 15, "tope": null, "topeAConfirmar": true,
+      "detalle": "Escaneando el código QR en la línea de cajas.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+    { "tienda": "vea", "medio": "Mercado Pago", "dias": ["lunes"], "pct": 20, "tope": null, "topeAConfirmar": true,
+      "detalle": "Pagando con código QR de Mercado Pago.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+    { "tienda": "dia", "medio": "Mercado Pago", "dias": ["miercoles"], "pct": 15, "tope": null, "topeAConfirmar": true,
+      "detalle": "En sucursales físicas y en Día Online.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, guía Mercado Pago noviembre 2026 (act. 30/10)" },
+
+    { "tienda": "dia", "medio": "Cuenta DNI", "dias": ["lunes"], "pct": 20, "tope": null, "topeAConfirmar": false,
+      "detalle": "Con tarjeta de crédito Visa desde la app, por NFC. Sin tope de reintegro.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, Cuenta DNI noviembre 2026" },
+    { "tienda": "dia", "medio": "Cuenta DNI", "dias": ["lunes"], "pct": 10, "tope": null, "topeAConfirmar": true,
+      "detalle": "Descuento general de Cuenta DNI (el de 20% con Visa crédito NFC lo mejora).", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "calcularsueldo.com.ar, Cuenta DNI noviembre 2026" },
+
+    { "tienda": "dia", "medio": "Banco Nación", "dias": ["viernes", "sabado"], "pct": 10, "tope": 7500, "topePeriodo": "por mes", "compraMinima": 35000,
+      "detalle": "Semana Nación, \"Viernes y sábados Extra\": 10% de devolución.", "desde": "2026-10-01", "hasta": "2026-12-31", "adicional": false, "verificar": true,
+      "fuente": "mdzol.com, Banco Nación en noviembre" },
+    { "tienda": "dia", "medio": "Banco Nación", "dias": ["jueves"], "pct": 10, "tope": null, "topeAConfirmar": false,
+      "detalle": "\"Tu comercio con vos\": 10% sin tope, compras presenciales y online. Confirmar que aplica en Día.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "mdzol.com, Banco Nación en noviembre" },
+
+    { "tienda": "coto", "medio": "Comunidad Coto", "dias": ["miercoles"], "pct": 20, "tope": null, "topeAConfirmar": false,
+      "detalle": "Solo compras online. Hay que ser miembro de Comunidad Coto; con todos los medios de pago; no aplica a todos los productos.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "convi.ar, Comunidad Coto" },
+    { "tienda": "coto", "medio": "Comunidad Coto", "dias": ["miercoles"], "pct": 15, "tope": null, "topeAConfirmar": false,
+      "detalle": "Solo en sucursal. Hay que ser miembro de Comunidad Coto; con todos los medios de pago; no aplica a todos los productos.", "desde": null, "hasta": "2026-11-30", "adicional": false, "verificar": true,
+      "fuente": "convi.ar, Comunidad Coto" }
   ]
 }

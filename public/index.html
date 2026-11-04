@@ -79,6 +79,19 @@
   .alt { font-size:14px; padding:3px 0; }
   .alt small { color:var(--muted); }
   .viejo { color:var(--warn); }
+  details.editor { margin-top:14px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:8px 12px; }
+  details.editor summary { cursor:pointer; font-weight:600; padding:4px 0; }
+  .editor h3 { margin:14px 0 6px; font-size:15px; }
+  .editor table { width:100%; border-collapse:collapse; font-size:13px; }
+  .editor th, .editor td { text-align:left; padding:4px 6px; border-top:1px solid var(--line); }
+  .editor .tabla { overflow-x:auto; }
+  .form { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:flex-end; }
+  .form label { display:flex; flex-direction:column; gap:2px; font-size:13px; color:var(--muted); }
+  .form label.chk { flex-direction:row; align-items:center; gap:4px; color:var(--text); }
+  .form input, .form select, .editor textarea { padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); font-size:14px; }
+  .editor textarea { width:100%; min-height:90px; font-family:monospace; }
+  .medios { display:flex; flex-wrap:wrap; gap:6px 14px; }
+  .medios label { display:flex; gap:5px; align-items:center; cursor:pointer; }
   .filas { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
   .fila { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; }
   .fila.mejor { border-color:var(--good); background:color-mix(in srgb, var(--good) 8%, transparent); }
@@ -133,6 +146,12 @@
   <section id="vistaCal" class="oculto">
     <div id="estadoCal" class="estado"></div>
     <div id="cal"></div>
+
+    <details class="editor" id="detEditor">
+      <summary>Editar beneficios</summary>
+      <div id="bMsg" class="estado"></div>
+      <div id="editorCuerpo"></div>
+    </details>
   </section>
 
   <section id="vistaCompra" class="oculto">
@@ -372,8 +391,10 @@ async function cargarLista() {
 /* ---------- Cuándo comprar ---------- */
 let cal = null;
 const fechaDia = (iso) => `${new Date(iso + "T12:00:00").toLocaleDateString("es-AR", { weekday: "long" })} ${fechaCorta(iso)}`;
+const textoTope = (b) => (b.tope ? `tope ${peso(b.tope)}${b.topePeriodo ? " " + b.topePeriodo : ""}` : b.topeAConfirmar ? "tope a confirmar" : "sin tope");
+const textoMinimo = (b) => (b.compraMinima ? ` · compra mín. ${peso(b.compraMinima)}` : "");
 function lineaBeneficio(b) {
-  const tope = b.tope ? `tope ${peso(b.tope)}${b.topePeriodo ? " " + b.topePeriodo : ""}` : "sin tope";
+  const tope = textoTope(b) + textoMinimo(b);
   return `<div class="ben"><b>${esc(b.tienda)}</b> · ${b.pct}%${b.adicional ? " adicional" : ""} con ${esc(b.medio)} <small>· ${tope}${b.hasta ? " · hasta " + fechaCorta(b.hasta) : ""}${b.verificar ? " · verificar" : ""}</small></div>`;
 }
 function renderCal() {
@@ -387,7 +408,7 @@ function renderCal() {
 
   const r = cal.recomendado && act.includes(cal.recomendado.tienda) ? cal.recomendado : null;
   const reco = r ? `<div class="reco"><b>Mejor día de la semana:</b> ${esc(fechaDia(r.fecha))} en <b>${esc(r.tienda)}</b>, ${r.pct}% con ${esc(r.medio)}
-      <small>(${r.tope ? "tope " + peso(r.tope) + (r.topePeriodo ? " " + r.topePeriodo : "") : "sin tope"}${r.verificar ? " · verificar" : ""})</small></div>` : "";
+      <small>(${textoTope(r)}${textoMinimo(r)}${r.verificar ? " · verificar" : ""})</small></div>` : "";
 
   const dias = cal.dias.map((d) => {
     const bs = d.beneficios.filter((b) => act.includes(b.tienda));
@@ -451,12 +472,17 @@ function agregarACompra(gid) {
     .catch((e) => aviso(e.message));
 }
 
-function mejorBeneficio(tienda) {
+// El beneficio que más ahorra para este subtotal: respeta el tope y la compra mínima
+function mejorBeneficio(tienda, subtotal) {
   if (!cal) return null;
   let best = null;
   for (const d of cal.dias) {
-    const b = d.mejor && d.mejor[tienda];
-    if (b && (!best || b.pct > best.b.pct)) best = { b, fecha: d.fecha };
+    for (const b of d.beneficios) {
+      if (b.tienda !== tienda || b.adicional) continue;
+      if (b.compraMinima && subtotal < b.compraMinima) continue;
+      const ahorro = Math.min(subtotal * b.pct / 100, b.tope || Infinity);
+      if (!best || ahorro > best.ahorro) best = { b, fecha: d.fecha, ahorro };
+    }
   }
   return best;
 }
@@ -509,11 +535,9 @@ function renderCompra() {
 
   html += tiendasRec.map((t) => {
     const lineas = rec.compras[t].map(lineaCompra).join("");
-    const mb = mejorBeneficio(t);
-    const sug = mb ? (() => {
-      const ahorro = Math.min(rec.subtotales[t] * mb.b.pct / 100, mb.b.tope || Infinity);
-      return `<div class="sug">💳 ${esc(mb.b.medio)} (${mb.b.pct}%) el ${esc(fechaDia(mb.fecha))}: ~${peso(ahorro)} menos${mb.b.verificar ? " (verificar)" : ""}</div>`;
-    })() : "";
+    const mb = mejorBeneficio(t, rec.subtotales[t]);
+    const sug = mb
+      ? `<div class="sug">💳 ${esc(mb.b.medio)} (${mb.b.pct}%) el ${esc(fechaDia(mb.fecha))}: ~${peso(mb.ahorro)} menos${mb.b.topeAConfirmar ? " (tope a confirmar)" : ""}${mb.b.verificar ? " (verificar)" : ""}</div>` : "";
     return `<div class="tcard"><h4><span>${esc(t)}</span><span>${peso(rec.subtotales[t])}</span></h4>${lineas}${sug}</div>`;
   }).join("");
 
@@ -562,6 +586,111 @@ document.addEventListener("click", (ev) => {
 });
 $("btnActualizar").addEventListener("click", actualizarCompra);
 
+/* ---------- Editor de beneficios ---------- */
+let ben = { misMedios: [], beneficios: [] };
+const DIAS_ES = [["lunes", "L"], ["martes", "M"], ["miercoles", "X"], ["jueves", "J"], ["viernes", "V"], ["sabado", "S"], ["domingo", "D"]];
+const abrevDias = (d) => (d === "todos" ? "todos" : Array.isArray(d) && d.length ? d.map((x) => (DIAS_ES.find(([n]) => n === x) || [0, "?"])[1]).join(" ") : "a confirmar");
+
+function renderEditor() {
+  const medios = [...new Set(ben.beneficios.map((b) => b.medio))].sort();
+  const mis = new Set(ben.misMedios.map((m) => m.toLowerCase()));
+  const filas = ben.beneficios.map((b, i) => `<tr><td>${esc(INFO[b.tienda]?.nombre || b.tienda)}</td><td>${esc(b.medio)}</td><td>${esc(abrevDias(b.dias))}</td>
+    <td>${b.pct}%</td><td>${b.tope ? peso(b.tope) : b.topeAConfirmar ? "a confirmar" : "—"}</td><td>${b.hasta ? fechaCorta(b.hasta) : "—"}</td>
+    <td><button class="quitar" type="button" data-del="${i}" title="Borrar">✕</button></td></tr>`).join("");
+  $("editorCuerpo").innerHTML = `
+    <h3>Medios de pago que uso</h3>
+    <div class="medios">${medios.length ? medios.map((m) => `<label><input type="checkbox" data-medio="${esc(m)}" ${mis.has(m.toLowerCase()) ? "checked" : ""}> ${esc(m)}</label>`).join("") : "<small>Todavía no hay beneficios cargados.</small>"}</div>
+    <div class="nota">Sin ninguno marcado se muestran los beneficios de todos los medios.</div>
+
+    <h3>Beneficios cargados (${ben.beneficios.length})</h3>
+    <div class="tabla"><table><tr><th>Tienda</th><th>Medio</th><th>Días</th><th>%</th><th>Tope</th><th>Hasta</th><th></th></tr>${filas}</table></div>
+
+    <h3>Agregar uno</h3>
+    <div class="form">
+      <label>Tienda <select id="bTienda">${TIENDAS.map((t) => `<option value="${esc(t)}">${esc(INFO[t]?.nombre || t)}</option>`).join("")}</select></label>
+      <label>Medio de pago <input id="bMedio" list="listaMedios" placeholder="Mercado Pago, Cuenta DNI…"></label>
+      <datalist id="listaMedios">${medios.map((m) => `<option value="${esc(m)}">`).join("")}</datalist>
+      <label>% <input id="bPct" type="number" min="1" max="100" step="0.5" style="width:70px"></label>
+      <label>Tope $ <input id="bTope" type="number" min="0" style="width:100px"></label>
+      <label>Período del tope <select id="bPeriodo"><option value="">—</option><option>por semana</option><option>por mes</option><option>por compra</option></select></label>
+      <label>Compra mínima $ <input id="bMin" type="number" min="0" style="width:100px"></label>
+      <label>Vence <input id="bHasta" type="date"></label>
+    </div>
+    <div class="form" style="margin-top:8px">
+      <span>Días:</span>
+      ${DIAS_ES.map(([d, l]) => `<label class="chk"><input type="checkbox" data-dia="${d}"> ${l}</label>`).join("")}
+      <label class="chk"><input type="checkbox" data-dia="todos"> todos</label>
+      <label class="chk"><input type="checkbox" id="bTopeAC"> no sé el tope</label>
+      <label class="chk"><input type="checkbox" id="bAdic"> se suma a otro</label>
+      <label class="chk"><input type="checkbox" id="bVerif"> ya lo verifiqué</label>
+    </div>
+    <div class="form" style="margin-top:8px">
+      <label style="flex:1 1 260px">Detalle (opcional) <input id="bDetalle" placeholder="Ej.: solo con QR, no aplica a todos los productos"></label>
+      <button id="bAgregar" type="button">Agregar</button>
+    </div>
+
+    <h3>Importar desde el chat</h3>
+    <div class="nota">Mandale al chat una captura del banner de descuentos y pegá acá lo que te devuelva.</div>
+    <textarea id="bImport" placeholder='[{"tienda":"coto","medio":"Mercado Pago","dias":["viernes"],"pct":25,…}]'></textarea>
+    <div class="form" style="margin-top:6px"><button id="bImpAgregar" type="button">Agregar a los que ya tengo</button>
+      <button id="bImpReemplazar" type="button" class="quitar">Reemplazar todo</button></div>`;
+}
+
+async function guardarBeneficios(nuevo, okMsg = "Guardado") {
+  try {
+    const r = await fetch("/api/beneficios", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(nuevo) });
+    const j = await r.json();
+    if (!r.ok) throw new Error([j.error, ...(j.detalle || [])].filter(Boolean).join(" · "));
+    ben = j;
+    renderEditor();
+    $("bMsg").textContent = okMsg;
+    await cargarCal();
+    renderCompra();
+    return true;
+  } catch (e) {
+    $("bMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+    return false;
+  }
+}
+async function cargarEditor() {
+  try { ben = await (await fetch("/api/beneficios")).json(); } catch { /* sin servidor */ }
+  renderEditor();
+}
+function leerFormulario() {
+  const c = $("editorCuerpo");
+  const dias = [...c.querySelectorAll("[data-dia]")].filter((x) => x.checked).map((x) => x.dataset.dia);
+  return {
+    tienda: $("bTienda").value, medio: $("bMedio").value, pct: $("bPct").value, tope: $("bTope").value, topePeriodo: $("bPeriodo").value,
+    compraMinima: $("bMin").value, hasta: $("bHasta").value, dias: dias.includes("todos") ? "todos" : dias,
+    topeAConfirmar: $("bTopeAC").checked, adicional: $("bAdic").checked, verificar: !$("bVerif").checked, detalle: $("bDetalle").value,
+  };
+}
+$("editorCuerpo").addEventListener("click", async (ev) => {
+  const del = ev.target.closest?.("[data-del]");
+  if (del) return guardarBeneficios({ misMedios: ben.misMedios, beneficios: ben.beneficios.filter((_, i) => i !== +del.dataset.del) }, "Borrado");
+  const id = ev.target.id;
+  if (id === "bAgregar") return guardarBeneficios({ misMedios: ben.misMedios, beneficios: [...ben.beneficios, leerFormulario()] }, "Agregado");
+  if (id === "bImpAgregar" || id === "bImpReemplazar") {
+    try {
+      const imp = Logica.parseImportacion($("bImport").value);
+      if (id === "bImpReemplazar") {
+        if (!confirm(`Esto borra los ${ben.beneficios.length} beneficios actuales y deja los ${imp.beneficios.length} pegados. ¿Seguir?`)) return;
+        return guardarBeneficios({ misMedios: imp.misMedios || ben.misMedios, beneficios: imp.beneficios }, "Reemplazado");
+      }
+      const r = Logica.combinarBeneficios(ben.beneficios, imp.beneficios);
+      const ok = await guardarBeneficios({ misMedios: ben.misMedios, beneficios: r.lista }, `Agregados ${r.agregados}${r.repetidos ? `, ${r.repetidos} ya estaban` : ""}`);
+      if (ok) $("bImport").value = "";
+    } catch (e) {
+      $("bMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+    }
+  }
+});
+$("editorCuerpo").addEventListener("change", (ev) => {
+  if (!ev.target.dataset?.medio) return;
+  const elegidos = [...$("editorCuerpo").querySelectorAll("[data-medio]")].filter((x) => x.checked).map((x) => x.dataset.medio);
+  guardarBeneficios({ misMedios: elegidos, beneficios: ben.beneficios }, "Medios guardados");
+});
+
 function ir(vista) {
   $("vistaBuscar").classList.toggle("oculto", vista !== "buscar");
   $("vistaLista").classList.toggle("oculto", vista !== "lista");
@@ -574,7 +703,7 @@ function ir(vista) {
   $("tabLista").classList.toggle("on", vista === "lista");
   $("tabCal").classList.toggle("on", vista === "cal");
   if (vista === "lista") cargarLista();
-  if (vista === "cal") cargarCal();
+  if (vista === "cal") { cargarCal(); cargarEditor(); }
   if (vista === "compra") { cargarCompra(); cargarCal().then(renderCompra); }
 }
 

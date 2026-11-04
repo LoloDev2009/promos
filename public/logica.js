@@ -111,7 +111,38 @@
     return { filas, alternativas, unaTienda, recomendado, mejorUna, ahorroVsUna };
   }
 
-  const api = { agruparFilas, costoEn, planCompra };
+  // ---- Importar beneficios pegados desde el chat ----
+  const sinAcentos = (s) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  const claveBeneficio = (b) => [
+    sinAcentos(b.tienda), sinAcentos(b.medio),
+    b.dias === "todos" ? "todos" : Array.isArray(b.dias) ? b.dias.map(sinAcentos).sort().join(",") : "",
+    Number(b.pct), b.hasta || "", b.compraMinima || "",
+  ].join("|");
+
+  // Suma los nuevos a los actuales sin repetir los que ya estaban
+  function combinarBeneficios(actuales, nuevos) {
+    const vistos = new Set(actuales.map(claveBeneficio));
+    const lista = [...actuales];
+    let agregados = 0, repetidos = 0;
+    for (const n of nuevos) {
+      const k = claveBeneficio(n);
+      if (vistos.has(k)) { repetidos++; continue; }
+      vistos.add(k); lista.push(n); agregados++;
+    }
+    return { lista, agregados, repetidos };
+  }
+
+  // Acepta una lista de beneficios, o un objeto { beneficios: [...], misMedios: [...] }
+  function parseImportacion(texto) {
+    let j;
+    try { j = JSON.parse(String(texto).trim().replace(/^```(?:json)?\s*|\s*```$/g, "")); }
+    catch { throw new Error("No es un JSON válido. Pegá exactamente lo que te devolvió el chat."); }
+    const beneficios = Array.isArray(j) ? j : j && Array.isArray(j.beneficios) ? j.beneficios : null;
+    if (!beneficios) throw new Error("Esperaba una lista de beneficios (o un objeto con la clave 'beneficios').");
+    return { beneficios, misMedios: j && Array.isArray(j.misMedios) ? j.misMedios : null };
+  }
+
+  const api = { agruparFilas, costoEn, planCompra, combinarBeneficios, parseImportacion };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Logica = api;
 })(typeof window !== "undefined" ? window : globalThis);
