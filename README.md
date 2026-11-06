@@ -64,7 +64,7 @@ Buscador de promos de Carrefour, Día y Coto.
 - Son VTEX como Carrefour y Día, con diferencias que el código respeta: no se manda `sc=1` (da error 400) y el precio de lista viene roto (se ignora si es absurdo).
 - **Jumbo**: las promos se leen de `/_v/search-promotions` (lotes de 20 productos). Las que piden ser cliente Prime u otra condición quedan marcadas y cuentan solo si tildás "Cuento promos con tarjeta, billetera o membresía".
 - **Disco**: lee sus promos con el seller de Jumbo (comparadas a mano con su web: 5 de 5 promos y precios coincidieron en la búsqueda "leche"). Se descartan los grupos `jumbo_prime` y `sgc`. Verificación limitada a esa muestra.
-- **Vea**: apagada ("promos sin leer"). Con el seller de Jumbo mostró una promo que Vea no tiene (4 de 5 coincidieron). Para activarla hace falta su seller propio: copiá `.env.example` a `.env` y completá `VEA_PROMO_SELLER`.
+- **Vea**: lee sus promos con su seller propio (`jumboargentinav700cordoba700`). Con el seller de Jumbo mostraba una promo que Vea no tiene (4 de 5 coincidieron); con el propio coincidieron 10 de 10 promos y precios (búsquedas "leche" y "leche la serenisima barista"). Se descartan `jumbo_prime` y `sgc`. Limitaciones: muestra chica y de una sola categoría, y el nombre del seller sugiere una sucursal de Córdoba, así que las promos podrían variar por zona. Se cambia con `VEA_PROMO_SELLER`.
 - `TIENDAS_ACTIVAS=carrefour,dia,coto npm start` limita las tiendas que se consultan. Las de la página se cargan solas desde el servidor.
 
 ## Seguridad

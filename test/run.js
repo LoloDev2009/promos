@@ -185,7 +185,9 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(vtexMod.TIENDAS.jumbo.promoSeller, "jumboargentinaj5202martinez");
   assert.equal(vtexMod.TIENDAS.disco.promos, "cencosud", "Disco lee promos (verificado contra su web)");
   assert.deepEqual(vtexMod.TIENDAS.disco.gruposIgnorados, ["jumbo_prime", "sgc"]);
-  assert.equal(vtexMod.TIENDAS.vea.promos, "pendiente", "Vea: falta el seller de promos");
+  assert.equal(vtexMod.TIENDAS.vea.promos, "cencosud", "Vea lee promos con su seller propio");
+  assert.equal(vtexMod.TIENDAS.vea.promoSeller, "jumboargentinav700cordoba700");
+  assert.notEqual(vtexMod.TIENDAS.vea.promoSeller, vtexMod.TIENDAS.jumbo.promoSeller, "Vea no usa el seller de Jumbo");
   assert.equal(vtexMod.TIENDAS.carrefour.sc, "1");
   const tj = await (await fetch(`${base}/api/tiendas`)).json();
   assert.deepEqual(tj.tiendas.map((x) => x.id), ["carrefour", "dia", "coto"], "TIENDAS_ACTIVAS limita las tiendas");
@@ -298,7 +300,32 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(pdd("1005").promos.length, 0, "Disco: el grupo sgc se descarta");
   assert.equal(pdd("32755").promos[0].pctEfectivo, 35, "Disco: las promos generic se leen");
   assert.ok(dd.every((i) => i.promosLeidas === true));
+  // Vea: usa su seller propio y también descarta jumbo_prime y sgc
+  const antesV = cuerposPromo.length;
+  const vv = await vtexMod.buscar("vea", "yerba", { base: `http://localhost:${pjp}`, paginas: 1 });
+  assert.ok(cuerposPromo.length > antesV, "Vea pide promos");
+  assert.ok(cuerposPromo.slice(antesV).every((c) => c.seller === "jumboargentinav700cordoba700"), "Vea usa su seller");
+  assert.equal(vv.find((i) => i.itemId === "411520").promos.length, 0, "Vea: la promo Prime se descarta");
+  assert.equal(vv.find((i) => i.itemId === "1005").promos.length, 0, "Vea: el grupo sgc se descarta");
+  assert.equal(vv.find((i) => i.itemId === "32755").promos[0].pctEfectivo, 35);
+  assert.ok(vv.every((i) => i.promosLeidas === true));
   jumboPromos.close();
+
+  // Caché: se descarta cuando cambia la configuración efectiva de promos (seller de Vea)
+  {
+    const { execFileSync } = require("child_process");
+    const dirC = fs.mkdtempSync(path.join(require("os").tmpdir(), "promos-cache-"));
+    const prueba = (env, accion) => execFileSync(process.execPath, ["--no-warnings", "-e",
+      `const d=require(${JSON.stringify(path.join(__dirname, "..", "db.js"))});` + accion],
+      { env: { ...process.env, DATA_DIR: dirC, ...env }, encoding: "utf8" }).trim();
+    const guarda = `d.guardar("vea","leche",[{tienda:"vea",itemId:"1",ean:null,nombre:"Leche",marca:null,link:"http://v/1",imagen:null,precio:100,precioLista:100,descuentoPct:0,promos:[],etiquetas:[]}]);console.log("ok")`;
+    const lee = `console.log(d.leerCache("vea","leche",36e5)?"hit":"miss")`;
+    prueba({}, guarda);
+    assert.equal(prueba({}, lee), "hit", "misma configuración: la caché sirve");
+    assert.equal(prueba({ VEA_PROMO_SELLER: "otro-seller" }, lee), "miss", "cambió el seller de Vea: se descarta la caché");
+    assert.equal(prueba({}, `d.guardar("vea","vacio",[]);` + `console.log(d.leerCache("vea","vacio",36e5)?"hit":"miss")`), "miss", "una búsqueda vacía no se guarda en caché");
+    fs.rmSync(dirC, { recursive: true, force: true });
+  }
 
   // Carrefour: si la primera búsqueda vuelve sin precios, se reintenta con sc=1 (y el carrito también lleva sc=1)
   const pedidosS = [];
@@ -340,6 +367,21 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   assert.equal(fideos.length, 6, "no se pierde todo el resultado por una verificación que no responde bien");
   assert.ok(fideos.every((i) => i.stockVerificado === false));
   noEntrega.close();
+
+  // Carrito que responde 200 pero SIN ítems (pasa en Vea): no es "todo agotado", se usa el stock del catálogo aun con pocos productos
+  const carritoVacio = http.createServer((req, res) => {
+    const send = (o) => { res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(o)); };
+    if (req.url.startsWith("/api/catalog_system")) {
+      if (!/_from=0/.test(req.url)) return send([]);
+      return send(Array.from({ length: 2 }, (_, k) => prod(String(90 + k), `Leche Barista ${k} 1 L`, 3390, 3390)));
+    }
+    send({ items: [] });
+  });
+  const pcv = await listen(carritoVacio);
+  const barista = await vtexMod.buscar("vea", "leche barista", { base: `http://localhost:${pcv}` });
+  assert.equal(barista.length, 2, "carrito sin ítems con pocos productos: no se pierden");
+  assert.ok(barista.every((i) => i.stockVerificado === false));
+  carritoVacio.close();
 
   // ---- Agrupar el mismo producto entre tiendas ----
   const { claveProducto } = require("../lib/agrupar");

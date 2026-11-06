@@ -137,6 +137,7 @@
     <form class="search" id="form">
       <input type="search" id="q" placeholder="Buscá un producto (yerba, leche, arroz…)" autofocus>
       <button>Buscar</button>
+      <label class="nota" style="white-space:nowrap"><input type="checkbox" id="fresco"> sin guardado</label>
     </form>
     <div id="estado" class="estado"></div>
     <div id="resultados" class="grid"></div>
@@ -336,7 +337,7 @@ async function buscar(e) {
   await Promise.all(TIENDAS.map(async (t) => {
     const t0 = performance.now();
     try {
-      const r = await fetch(`/api/buscar?q=${encodeURIComponent(q)}&tiendas=${t}`);
+      const r = await fetch(`/api/buscar?q=${encodeURIComponent(q)}&tiendas=${t}${$("fresco").checked ? "&fresh=1" : ""}`);
       const j = await r.json();
       if (token !== tokenBusqueda) return;
       if (!r.ok) throw new Error(j.error || "Error");

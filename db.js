@@ -45,8 +45,14 @@ CREATE TABLE IF NOT EXISTS cache (
 // Si cambió algo de la configuración que afecta los resultados (sucursal de Coto, código postal, sellers...),
 // lo guardado en caché ya no vale: se descarta para no seguir mostrando datos de la configuración anterior.
 db.exec(`CREATE TABLE IF NOT EXISTS meta (clave TEXT PRIMARY KEY, valor TEXT NOT NULL)`);
-const firmaConfig = JSON.stringify(
-  ["COTO_STORE", "COTO_KEY", "CP", "JUMBO_PROMO_SELLER", "DISCO_PROMO_SELLER", "VEA_PROMO_SELLER"].map((k) => [k, process.env[k] || ""]));
+// Se firma la configuración EFECTIVA (no solo el .env): si cambia el seller por defecto o se activa una tienda
+// desde el código, la caché vieja tampoco vale.
+const { TIENDAS: TIENDAS_CFG } = require("./scrapers/vtex");
+const firmaConfig = JSON.stringify([
+  ["cacheV", 2], // subir este número descarta todo lo guardado (2: ya no se guardan búsquedas vacías)
+  ...["COTO_STORE", "COTO_KEY", "CP"].map((k) => [k, process.env[k] || ""]),
+  ...["jumbo", "disco", "vea"].map((t) => [t, TIENDAS_CFG[t].promos, TIENDAS_CFG[t].promoSeller || "", (TIENDAS_CFG[t].gruposIgnorados || []).join("+")]),
+]);
 const firmaPrevia = db.prepare(`SELECT valor FROM meta WHERE clave = 'firma'`).get();
 if (!firmaPrevia || firmaPrevia.valor !== firmaConfig) db.exec(`DELETE FROM cache`);
 db.prepare(`INSERT INTO meta (clave, valor) VALUES ('firma', ?) ON CONFLICT (clave) DO UPDATE SET valor = excluded.valor`).run(firmaConfig);
@@ -86,7 +92,7 @@ function guardar(tienda, q, items) {
       });
       insPrecio.run(id, ahora, it.precio, it.precioLista, it.descuentoPct, JSON.stringify(it.promos));
     }
-    putCache.run(tienda, q, ahora, JSON.stringify(items));
+    if (items.length) putCache.run(tienda, q, ahora, JSON.stringify(items)); // una búsqueda vacía no se guarda: se reintenta
     for (const it of items) {
       if (it.itemId) refrescarMiembro.run(JSON.stringify(recorte(it)), ahora, it.tienda, String(it.itemId));
     }

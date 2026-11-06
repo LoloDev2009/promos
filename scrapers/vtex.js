@@ -11,6 +11,7 @@ const { pool } = require("../lib/concurrencia");
 //              "cencosud"  = se leen del endpoint propio de Cencosud (necesita promoSeller)
 //              "pendiente" = todavía no se leen (falta el seller de la tienda)
 const SELLER_JUMBO = "jumboargentinaj5202martinez";
+const SELLER_VEA = "jumboargentinav700cordoba700"; // seller propio de Vea (el de Jumbo mostraba una promo que Vea no tiene)
 const TIENDAS = {
   carrefour: { nombre: "Carrefour", base: process.env.CARREFOUR_URL || "https://www.carrefour.com.ar", sc: "1", scBusqueda: "1", promos: "carrito" },
   dia: { nombre: "Día", base: process.env.DIA_URL || "https://diaonline.supermercadosdia.com.ar", sc: "1", scBusqueda: "1", promos: "precio", etiquetas: true },
@@ -23,7 +24,8 @@ const TIENDAS = {
            promos: "cencosud", promoSeller: process.env.DISCO_PROMO_SELLER || SELLER_JUMBO,
            gruposIgnorados: process.env.DISCO_PROMO_SELLER ? [] : ["jumbo_prime", "sgc"] },
   vea: { nombre: "Vea", base: process.env.VEA_URL || "https://www.vea.com.ar", sc: null, scBusqueda: null,
-         promos: process.env.VEA_PROMO_SELLER ? "cencosud" : "pendiente", promoSeller: process.env.VEA_PROMO_SELLER || null },
+         // Verificado a mano contra su web: 10 productos (leche), promos y precios coinciden. El nombre del seller sugiere una sucursal de Córdoba.
+         promos: "cencosud", promoSeller: process.env.VEA_PROMO_SELLER || SELLER_VEA, gruposIgnorados: ["jumbo_prime", "sgc"] },
 };
 
 const conSc = (url, sc) => (sc ? `${url}${url.includes("?") ? "&" : "?"}sc=${sc}` : url);
@@ -91,7 +93,9 @@ async function verificarStock(base, items, cfg) {
           country: "ARG",
         }),
       });
-      for (const x of data.items ?? []) if (x.availability === "available") disponibles.add(String(x.id));
+      // Cencosud (Vea) responde 200 pero sin ningún ítem: eso no es "todo agotado", es que la verificación no funciona
+      if (!Array.isArray(data?.items) || data.items.length === 0) throw new Error("carrito sin ítems");
+      for (const x of data.items) if (x.availability === "available") disponibles.add(String(x.id));
     } catch {
       // si la verificación falla no descartamos el lote: mejor mostrar de más que perder todo
       verificado = false;

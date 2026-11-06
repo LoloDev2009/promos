@@ -1,8 +1,9 @@
 // Para comparar a mano con la web: muestra productos de Disco/Vea con la promo que devuelve el seller de Jumbo.
-// Uso: node cencosud-verificar.js [disco|vea] [término]     (por defecto: disco, "leche")
+// Uso: node cencosud-verificar.js [disco|vea] [término] [seller]     (por defecto: disco, "leche")
 const BASES = { disco: process.env.DISCO_URL || "https://www.disco.com.ar", vea: process.env.VEA_URL || "https://www.vea.com.ar" };
-const SELLER = process.env.PROMO_SELLER || "jumboargentinaj5202martinez";
-const [tienda = "disco", termino = "leche"] = process.argv.slice(2);
+const [tienda = "disco", termino = "leche", sellerArg] = process.argv.slice(2);
+const SELLER = sellerArg || process.env.PROMO_SELLER || "jumboargentinaj5202martinez";
+console.log("seller usado:", SELLER);
 const base = BASES[tienda];
 if (!base) { console.log("Uso: node cencosud-verificar.js [disco|vea] [término]"); process.exit(1); }
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
@@ -30,7 +31,7 @@ const H = { "User-Agent": UA, Accept: "application/json", "Content-Type": "appli
     if (vistos.size >= 5 && !vistos.has(f.sku)) continue;
     vistos.add(f.sku);
     console.log(`• ${f.x.p.productName}  — $${f.x.precio}`);
-    console.log(`  ${base}${f.x.p.link ?? ""}`);
+    console.log(`  ${/^https?:/.test(f.x.p.link ?? "") ? f.x.p.link : base + (f.x.p.link ?? "")}`);
     console.log(`  [${f.grupo}] ${f.pr.name} · desc. efectivo ${f.pr.effectiveDiscount} · ${String(f.pr.start).slice(0, 10)} → ${String(f.pr.end).slice(0, 10)}`);
   }
   console.log("\nContame por cada producto: ¿la web muestra esa promo? (sí / no / otra distinta). Y si el precio coincide.");
