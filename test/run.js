@@ -183,7 +183,8 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   for (const k of ["jumbo", "disco", "vea"]) assert.equal(vtexMod.TIENDAS[k].sc, null, `${k}: no se manda sc (da 400)`);
   assert.equal(vtexMod.TIENDAS.jumbo.promos, "cencosud", "Jumbo lee sus promos del endpoint de Cencosud");
   assert.equal(vtexMod.TIENDAS.jumbo.promoSeller, "jumboargentinaj5202martinez");
-  assert.equal(vtexMod.TIENDAS.disco.promos, "pendiente", "Disco: falta el seller de promos");
+  assert.equal(vtexMod.TIENDAS.disco.promos, "cencosud", "Disco lee promos (verificado contra su web)");
+  assert.deepEqual(vtexMod.TIENDAS.disco.gruposIgnorados, ["jumbo_prime", "sgc"]);
   assert.equal(vtexMod.TIENDAS.vea.promos, "pendiente", "Vea: falta el seller de promos");
   assert.equal(vtexMod.TIENDAS.carrefour.sc, "1");
   const tj = await (await fetch(`${base}/api/tiendas`)).json();
@@ -243,6 +244,7 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
         const solo = (o) => Object.fromEntries(Object.entries(o).filter(([sku]) => pide.has(sku)));
         return send({ promotions: {
           jumbo_prime: { promotions: solo({ "411520": mkPromo("PR PRIME 30% DICOMERE | Clientes", "percentual", "0.30", -2, 4) }) },
+          sgc: { promotions: solo({ "1005": mkPromo("10% SGC", "percentual", "0.10", -1, 3) }) },
           generic: { promotions: solo({
             "32755": mkPromo("35% PIPORE | Ofertas Trafico", "percentual", "0.35", -1, 1),
             "311230": mkPromo("2do al 70% NOBLEZA GAUCHA   | Ofertas Internas", "segundo_al", "0.35", -1, 1), // 0.35: valor real observado
@@ -284,12 +286,18 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
   const jf = await vtexMod.buscar("jumbo", "yerba", { base: `http://localhost:${pjp}`, paginas: 1 });
   assert.equal(jf.length, 48);
   assert.ok(jf.every((i) => i.promosLeidas === false && i.promos.length === 0));
-  // Disco sin seller configurado: no consulta promos
+  // Disco: usa el seller de Jumbo pero descarta los grupos jumbo_prime y sgc
+  assert.equal(por("1005").promos[0].condicion, "Sgc", "Jumbo sí muestra el grupo sgc");
   promoFalla = false;
   const antes = cuerposPromo.length;
   const dd = await vtexMod.buscar("disco", "yerba", { base: `http://localhost:${pjp}`, paginas: 1 });
-  assert.equal(cuerposPromo.length, antes, "Disco no tiene seller: no se piden promos");
-  assert.ok(dd.every((i) => i.promosLeidas === undefined));
+  const pdd = (id) => dd.find((i) => i.itemId === id);
+  assert.ok(cuerposPromo.length > antes, "Disco pide promos");
+  assert.ok(cuerposPromo.slice(antes).every((c) => c.seller === "jumboargentinaj5202martinez"), "Disco usa el seller de Jumbo");
+  assert.equal(pdd("411520").promos.length, 0, "Disco: la promo Prime de Jumbo se descarta");
+  assert.equal(pdd("1005").promos.length, 0, "Disco: el grupo sgc se descarta");
+  assert.equal(pdd("32755").promos[0].pctEfectivo, 35, "Disco: las promos generic se leen");
+  assert.ok(dd.every((i) => i.promosLeidas === true));
   jumboPromos.close();
 
   // Carrefour: si la primera búsqueda vuelve sin precios, se reintenta con sc=1 (y el carrito también lleva sc=1)
@@ -322,7 +330,10 @@ const listen = (s) => new Promise((r) => s.listen(0, () => r(s.address().port)))
       return send(Array.from({ length: 6 }, (_, k) => prod(String(70 + k), `Fideos Tipo ${k} 500 g.`, 1000, 1000)));
     }
     let b = ""; req.on("data", (c) => (b += c));
-    req.on("end", () => send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "cannotBeDelivered" })) }));
+    req.on("end", () => {
+      if (req.url.startsWith("/_v/search-promotions")) return send({ promotions: {} }); // Disco también pide promos
+      send({ items: JSON.parse(b).items.map((x) => ({ id: x.id, availability: "cannotBeDelivered" })) });
+    });
   });
   const pn = await listen(noEntrega);
   const fideos = await vtexMod.buscar("disco", "fideos", { base: `http://localhost:${pn}` });

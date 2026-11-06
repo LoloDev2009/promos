@@ -10,14 +10,18 @@ const { pool } = require("../lib/concurrencia");
 //              "precio"    = el descuento ya viene en el precio (precio vs precio de lista)
 //              "cencosud"  = se leen del endpoint propio de Cencosud (necesita promoSeller)
 //              "pendiente" = todavía no se leen (falta el seller de la tienda)
+const SELLER_JUMBO = "jumboargentinaj5202martinez";
 const TIENDAS = {
   carrefour: { nombre: "Carrefour", base: process.env.CARREFOUR_URL || "https://www.carrefour.com.ar", sc: "1", scBusqueda: "1", promos: "carrito" },
   dia: { nombre: "Día", base: process.env.DIA_URL || "https://diaonline.supermercadosdia.com.ar", sc: "1", scBusqueda: "1", promos: "precio", etiquetas: true },
   // Cencosud: las promos viven en /_v/search-promotions, que pide el "seller" de la tienda (no el "1" del catálogo)
   jumbo: { nombre: "Jumbo", base: process.env.JUMBO_URL || "https://www.jumbo.com.ar", sc: null, scBusqueda: null,
-           promos: "cencosud", promoSeller: process.env.JUMBO_PROMO_SELLER || "jumboargentinaj5202martinez" },
+           promos: "cencosud", promoSeller: process.env.JUMBO_PROMO_SELLER || SELLER_JUMBO },
+  // Disco: comparado a mano con su web (5/5 promos y precios coinciden). Sin seller propio se usa el de Jumbo,
+  // y en ese caso se descartan los grupos que son de Jumbo (jumbo_prime) o no verificados (sgc).
   disco: { nombre: "Disco", base: process.env.DISCO_URL || "https://www.disco.com.ar", sc: null, scBusqueda: null,
-           promos: process.env.DISCO_PROMO_SELLER ? "cencosud" : "pendiente", promoSeller: process.env.DISCO_PROMO_SELLER || null },
+           promos: "cencosud", promoSeller: process.env.DISCO_PROMO_SELLER || SELLER_JUMBO,
+           gruposIgnorados: process.env.DISCO_PROMO_SELLER ? [] : ["jumbo_prime", "sgc"] },
   vea: { nombre: "Vea", base: process.env.VEA_URL || "https://www.vea.com.ar", sc: null, scBusqueda: null,
          promos: process.env.VEA_PROMO_SELLER ? "cencosud" : "pendiente", promoSeller: process.env.VEA_PROMO_SELLER || null },
 };
@@ -165,6 +169,7 @@ async function leerPromosCencosud(base, cfg, items) {
       });
       if (!data || typeof data.promotions !== "object") throw new Error("respuesta sin promotions");
       for (const [grupo, g] of Object.entries(data.promotions)) {
+        if (cfg.gruposIgnorados?.includes(grupo)) continue;
         for (const [sku, p] of Object.entries(g?.promotions ?? {})) {
           const it = porSku.get(String(sku));
           const promo = it && promoCencosud(p, grupo, hoy);
